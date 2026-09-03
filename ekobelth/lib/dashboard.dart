@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'componentes.dart';
 import 'adduser.dart';
+import 'editinfo.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = const Color(0xFFEAF8E5);
@@ -15,7 +16,7 @@ class DashboardScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              _buildTopBar(),
+              _buildTopBar(context),
               const SizedBox(height: 40),
               Expanded(
                 child: Row(
@@ -38,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildActionMenu(context), // Passando o context aqui
+                          _buildActionMenu(context),
                           const SizedBox(height: 32),
                           buildLembretes(),
                         ],
@@ -54,7 +55,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -90,13 +91,74 @@ class DashboardScreen extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.notifications_none, size: 28),
                 onPressed: () {
-                  print("Abrir Notificações");
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          25,
+                        ),
+                      ),
+                      backgroundColor: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize:
+                              MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Notificações",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors
+                                    .blue[800],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Nenhuma nova notificação no momento.",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_today, size: 24),
                 onPressed: () {
-                  print("Abrir Calendário");
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          25,
+                        ),
+                      ),
+                      backgroundColor: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SizedBox(
+                          height: 400,
+                          width: 350,
+
+                          child: CalendarDatePicker(
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                            onDateChanged: (DateTime date) {
+                              print("Data selecionada: $date");
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
               IconButton(
@@ -156,7 +218,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Recebendo o context como parâmetro aqui
   Widget _buildActionMenu(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -177,18 +238,11 @@ class DashboardScreen extends StatelessWidget {
           }),
           const SizedBox(height: 16),
           actionItem(Icons.settings, 'Editar Info', Colors.green, () {
-            print("Editar Info Clicado");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EditarInfoScreen()),
+            );
           }),
-          const SizedBox(height: 16),
-          actionItem(
-            Icons.medication,
-            'Adicionar medicamento',
-            Colors.greenAccent.shade400,
-            () {
-              print("Adicionar Medicamento Clicado");
-            },
-            isOutlined: true,
-          ),
         ],
       ),
     );

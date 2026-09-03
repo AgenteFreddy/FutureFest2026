@@ -1,5 +1,6 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'componentes.dart';
+import 'dashboard.dart';
 
 class AdicionarUsuarioScreen extends StatefulWidget {
   const AdicionarUsuarioScreen({Key? key}) : super(key: key);
@@ -17,11 +18,31 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
   final TextEditingController observacoesController = TextEditingController();
 
   final List<String> listaRemedios = [
-    'Paracetamol 500mg',
-    'Ibuprofeno 400mg',
-    'Amoxicilina 875mg',
-    'Losartana 50mg',
-    'Dipirona 1g'
+    'Paracetamol',
+    'Ibuprofeno',
+    'Amoxicilina',
+    'Losartana',
+    'Dipirona',
+    'Omeprazol',
+    'Simeticona',
+    'Loratadina',
+    'Azitromicina',
+    'AAS (Ácido Acetilsalicílico)',
+    'Prednisona',
+    'Cefalexina',
+    'Metformina',
+    'Enalapril',
+    'Clonazepam',
+    'Fluoxetina',
+    'Pantoprazol',
+    'Diclofenaco',
+    'Nimesulida',
+    'Cetirizina',
+    'Dexametasona',
+    'Levotiroxina',
+    'Sinvastatina',
+    'Atenolol',
+    'Diazepam',
   ];
   String? remedioSelecionado;
 
@@ -30,7 +51,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
     'Oral (Gotas)',
     'Injetável',
     'Tópico (Pomada)',
-    'Inalação'
+    'Inalação',
   ];
   String? viaSelecionada;
 
@@ -41,28 +62,28 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
     'A cada 12 horas',
     '1 vez ao dia (24h)',
     '2 vez ao dia (24h)',
-    '4 vez ao dia (24)'
+    '4 vez ao dia (24)',
   ];
   String? frequenciaSelecionada;
 
-  Widget _buildDropdownField(String label, String? value, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _buildDropdownField(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           labelText: label,
           filled: true,
           fillColor: Colors.white,
         ),
         value: value,
         items: items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
+          return DropdownMenuItem<String>(value: item, child: Text(item));
         }).toList(),
         onChanged: onChanged,
       ),
@@ -73,7 +94,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
     DateTime? dataEscolhida = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(), 
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
@@ -118,8 +139,8 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   spreadRadius: 2,
-                )
-              ]
+                ),
+              ],
             ),
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -130,37 +151,39 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0056B3), 
+                    color: Color(0xFF0056B3),
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
 
                 buildTextField('Nome do(a) Paciente', nomeController),
-                
+
                 _buildDropdownField(
-                  'Selecione o Medicamento', 
-                  remedioSelecionado, 
-                  listaRemedios, 
-                  (val) => setState(() => remedioSelecionado = val)
+                  'Selecione o Medicamento',
+                  remedioSelecionado,
+                  listaRemedios,
+                  (val) => setState(() => remedioSelecionado = val),
                 ),
-                
+
                 Row(
                   children: [
                     Expanded(
                       flex: 3,
                       child: _buildDropdownField(
-                        'Via', 
-                        viaSelecionada, 
-                        listaVias, 
-                        (val) => setState(() => viaSelecionada = val)
+                        'Via',
+                        viaSelecionada,
+                        listaVias,
+                        (val) => setState(() => viaSelecionada = val),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       flex: 4,
-                      // Usando o seu componente importado
-                      child: buildTextField('Dose (ex: 2 comp.)', quantidadeController),
+                      child: buildTextField(
+                        'Dose (ex: 2 comp.)',
+                        quantidadeController,
+                      ),
                     ),
                   ],
                 ),
@@ -170,16 +193,15 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     Expanded(
                       flex: 4,
                       child: _buildDropdownField(
-                        'Frequência', 
-                        frequenciaSelecionada, 
-                        listaFrequencia, 
-                        (val) => setState(() => frequenciaSelecionada = val)
+                        'Frequência',
+                        frequenciaSelecionada,
+                        listaFrequencia,
+                        (val) => setState(() => frequenciaSelecionada = val),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       flex: 3,
-                      // Criado diretamente para suportar teclado numérico
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: TextFormField(
@@ -198,9 +220,9 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Row(
                   children: [
                     Expanded(
@@ -218,8 +240,8 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Text(
-                              inicioController.text.isEmpty 
-                                  ? 'Data/Hora de Início' 
+                              inicioController.text.isEmpty
+                                  ? 'Data/Hora de Início'
                                   : 'Início:\n${inicioController.text}',
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 12),
@@ -243,8 +265,8 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
                             child: Text(
-                              fimController.text.isEmpty 
-                                  ? 'Data/Hora de Fim' 
+                              fimController.text.isEmpty
+                                  ? 'Data/Hora de Fim'
                                   : 'Fim:\n${fimController.text}',
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 12),
@@ -255,7 +277,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 8),
 
                 Padding(
@@ -275,7 +297,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                 ),
 
                 const SizedBox(height: 20),
-                
+
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4CAF50),
@@ -285,13 +307,22 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () {
-                    // Lógica
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
-                    'Salvar Tratamento', 
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)
+                    'Salvar Tratamento',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),
