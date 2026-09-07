@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'componentes.dart';
 import 'adduser.dart';
 import 'editinfo.dart';
-
+ 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
-
+ 
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = const Color(0xFFEAF8E5);
@@ -54,7 +54,7 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
+ 
   Widget _buildTopBar(BuildContext context) {
     return Row(
       children: [
@@ -95,16 +95,13 @@ class DashboardScreen extends StatelessWidget {
                     context: context,
                     builder: (context) => Dialog(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          25,
-                        ),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       backgroundColor: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: Column(
-                          mainAxisSize:
-                              MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -112,8 +109,7 @@ class DashboardScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: Colors
-                                    .blue[800],
+                                color: Colors.blue[800],
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -136,9 +132,7 @@ class DashboardScreen extends StatelessWidget {
                     context: context,
                     builder: (context) => Dialog(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          25,
-                        ),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       backgroundColor: Colors.white,
                       child: Padding(
@@ -146,7 +140,7 @@ class DashboardScreen extends StatelessWidget {
                         child: SizedBox(
                           height: 400,
                           width: 350,
-
+ 
                           child: CalendarDatePicker(
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2000),
@@ -161,11 +155,34 @@ class DashboardScreen extends StatelessWidget {
                   );
                 },
               ),
-              IconButton(
+              PopupMenuButton<String>(
                 icon: const Icon(Icons.settings_outlined, size: 28),
-                onPressed: () {
-                  print("Abrir Configurações");
+                onSelected: (String value) {
+                  print("Tema selecionado: $value");
                 },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'claro',                    
+                    child: ListTile(
+                      leading: Icon(Icons.wb_sunny_outlined),
+                      title: Text('Modo Claro'),                
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'escuro',
+                    child: ListTile(
+                      leading: Icon(Icons.dark_mode_outlined),
+                      title: Text('Modo Escuro'),
+                    ),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'normal',
+                    child: ListTile(
+                      leading: Icon(Icons.brightness_auto_outlined),
+                      title: Text('Modo Normal'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -173,7 +190,7 @@ class DashboardScreen extends StatelessWidget {
       ],
     );
   }
-
+ 
   Widget _buildWelcomeSection() {
     return Row(
       children: [
@@ -217,7 +234,7 @@ class DashboardScreen extends StatelessWidget {
       ],
     );
   }
-
+ 
   Widget _buildActionMenu(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -228,7 +245,7 @@ class DashboardScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          actionItem(Icons.group_add, 'Adicionar Usuario', Colors.green, () {
+          actionItem(Icons.group_add, 'Adicionar', Colors.green, () {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -237,7 +254,7 @@ class DashboardScreen extends StatelessWidget {
             );
           }),
           const SizedBox(height: 16),
-          actionItem(Icons.settings, 'Editar Info', Colors.green, () {
+          actionItem(Icons.person, 'Editar', Colors.green, () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const EditarInfoScreen()),
@@ -248,3 +265,4 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 }
+ 
