@@ -15,7 +15,12 @@ Widget buildTextField(String entradaNome, TextEditingController controle) {
   );
 }
 
-Widget buildButton(BuildContext context, String entradaNome, Widget telaDestino, VoidCallback enviar) {
+Widget buildButton(
+  BuildContext context,
+  String entradaNome,
+  Widget telaDestino,
+  VoidCallback enviar,
+) {
   return Center(
     child: Padding(
       padding: const EdgeInsets.all(10),
@@ -25,9 +30,7 @@ Widget buildButton(BuildContext context, String entradaNome, Widget telaDestino,
           enviar();
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => telaDestino,
-            ),
+            MaterialPageRoute(builder: (context) => telaDestino),
           );
         },
       ),
@@ -35,11 +38,18 @@ Widget buildButton(BuildContext context, String entradaNome, Widget telaDestino,
   );
 }
 
-Widget actionItem(IconData icon, String text, Color iconColor, VoidCallback onTap, {bool isOutlined = false}) {
+Widget actionItem(
+  IconData icon,
+  String text,
+  Color iconColor,
+  VoidCallback onTap, {
+  bool isOutlined = false,
+  Color? textColor,
+}) {
   return Material(
-    color: Colors.transparent, 
+    color: Colors.transparent,
     child: InkWell(
-      onTap: onTap, 
+      onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
@@ -49,36 +59,15 @@ Widget actionItem(IconData icon, String text, Color iconColor, VoidCallback onTa
             const SizedBox(width: 16),
             Text(
               text,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+                color: textColor,
+              ),
             ),
           ],
         ),
       ),
-    ),
-  );
-}
-
-Widget buildProximosMedicamentos() {
-  return Container(
-    padding: const EdgeInsets.all(24),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Proximos Medicamentos',
-          style: TextStyle(
-            fontSize: 22,
-            color: Color(0xFF0050A0), 
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 24),
-        patientRow('assets/idoso1.png', 'Sr. Joaquin', '12:30'),
-      ],
     ),
   );
 }
@@ -97,18 +86,21 @@ Widget buildLembretes() {
           'Lembretes',
           style: TextStyle(
             fontSize: 22,
-            color: Color(0xFF0050A0), 
+            color: Color(0xFF0050A0),
             fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 24),
-        patientRow('assets/idoso1.png', 'Sr. Joaquin', '14:30'),
+        const Text(
+          'Nenhum lembrete cadastrado.',
+          style: TextStyle(fontSize: 14),
+        ),
       ],
     ),
   );
 }
 
-Widget patientRow(String imagePath, String name, String time) {
+Widget patientRow(String imagePath, String name, String subtitle, String time) {
   return Row(
     children: [
       CircleAvatar(
@@ -116,24 +108,35 @@ Widget patientRow(String imagePath, String name, String time) {
         backgroundColor: Colors.grey.shade300,
         child: ClipOval(
           child: Image.asset(
-            imagePath, 
+            imagePath,
             fit: BoxFit.cover,
             width: 40,
             height: 40,
-            errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.white),
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.person, color: Colors.white),
           ),
         ),
       ),
       const SizedBox(width: 16),
       Expanded(
-        child: Text(
-          name,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+            if (subtitle.isNotEmpty)
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+          ],
         ),
       ),
       Text(
         time,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     ],
   );

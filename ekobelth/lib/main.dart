@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'componentes.dart';
 import 'dashboard.dart';
+import 'providers/theme_provider.dart';
+import 'services/notification_service.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,10 +21,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(),
-      home: const Ekobelth(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeProvider.themeMode,
+          home: const Ekobelth(),
+        );
+      },
     );
   }
 }
@@ -30,9 +46,7 @@ class _EkobelthState extends State<Ekobelth> {
   final TextEditingController _emailEditingController = TextEditingController();
   final TextEditingController _senhaEditingController = TextEditingController();
 
-  void enviar() {
-    print("Função void enviar() executada!");
-  }
+  void _handleLogin() {}
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +72,16 @@ class _EkobelthState extends State<Ekobelth> {
                 const Text('cuidador', style: TextStyle(color: Colors.blue)),
                 const SizedBox(height: 20),
 
-                buildTextField('email', _emailEditingController),
-                buildTextField('senha', _senhaEditingController),
+                buildTextField('Email', _emailEditingController),
+                buildTextField('Senha', _senhaEditingController),
 
                 const SizedBox(height: 10),
-                buildButton(context, 'Entrar', const DashboardScreen(), enviar),
+                buildButton(
+                  context,
+                  'Entrar',
+                  const DashboardScreen(),
+                  _handleLogin,
+                ),
               ],
             ),
           ),

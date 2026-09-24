@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'componentes.dart';
-import 'dashboard.dart';
+import 'models/tratamento.dart';
+import 'services/api_service.dart';
 
 class AdicionarUsuarioScreen extends StatefulWidget {
   const AdicionarUsuarioScreen({Key? key}) : super(key: key);
@@ -61,8 +62,8 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
     'A cada 8 horas',
     'A cada 12 horas',
     '1 vez ao dia (24h)',
-    '2 vez ao dia (24h)',
-    '4 vez ao dia (24)',
+    '2 vezes ao dia (24h)',
+    '4 vezes ao dia (24h)',
   ];
   String? frequenciaSelecionada;
 
@@ -111,7 +112,6 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
           String ano = dataEscolhida.year.toString();
           String hora = horaEscolhida.hour.toString().padLeft(2, '0');
           String minuto = horaEscolhida.minute.toString().padLeft(2, '0');
-
           controller.text = "$dia/$mes/$ano $hora:$minuto";
         });
       }
@@ -156,16 +156,13 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-
                 buildTextField('Nome do(a) Paciente', nomeController),
-
                 _buildDropdownField(
                   'Selecione o Medicamento',
                   remedioSelecionado,
                   listaRemedios,
                   (val) => setState(() => remedioSelecionado = val),
                 ),
-
                 Row(
                   children: [
                     Expanded(
@@ -187,7 +184,6 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ],
                 ),
-
                 Row(
                   children: [
                     Expanded(
@@ -220,9 +216,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     Expanded(
@@ -277,9 +271,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 8),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextFormField(
@@ -295,9 +287,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4CAF50),
@@ -306,13 +296,48 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DashboardScreen(),
-                      ),
+                  onPressed: () async {
+                    if (nomeController.text.isEmpty ||
+                        remedioSelecionado == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Preencha pelo menos o nome e o medicamento.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final novoTratamento = Tratamento(
+                      paciente: nomeController.text,
+                      medicamento: remedioSelecionado!,
+                      via: viaSelecionada ?? '',
+                      dose: quantidadeController.text,
+                      frequencia: frequenciaSelecionada ?? '',
+                      estoque: estoqueController.text,
+                      inicio: inicioController.text,
+                      fim: fimController.text,
+                      obs: observacoesController.text,
                     );
+
+                    final api = ApiService();
+                    bool sucesso = await api.addTratamento(novoTratamento);
+
+                    if (sucesso && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Tratamento salvo com sucesso!'),
+                        ),
+                      );
+                      Navigator.pop(context, true);
+                    } else if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Erro ao salvar no servidor.'),
+                        ),
+                      );
+                    }
                   },
                   child: const Text(
                     'Salvar Tratamento',

@@ -1,87 +1,75 @@
 import 'package:flutter/material.dart';
+import 'models/tratamento.dart';
+import 'services/api_service.dart';
 
 class EditarInfoScreen extends StatefulWidget {
-  const EditarInfoScreen({Key? key}) : super(key: key);
+  const EditarInfoScreen({super.key});
 
   @override
-  _EditarInfoScreenState createState() => _EditarInfoScreenState();
+  State<EditarInfoScreen> createState() => _EditarInfoScreenState();
 }
 
 class _EditarInfoScreenState extends State<EditarInfoScreen> {
   final List<String> listaRemedios = [
-    'Paracetamol', 'Ibuprofeno', 'Amoxicilina', 'Losartana', 'Dipirona',
-    'Omeprazol', 'Simeticona', 'Loratadina', 'Azitromicina', 'AAS (Ácido Acetilsalicílico)',
-    'Prednisona', 'Cefalexina', 'Metformina', 'Enalapril', 'Clonazepam',
-    'Fluoxetina', 'Pantoprazol', 'Diclofenaco', 'Nimesulida', 'Cetirizina',
-    'Dexametasona', 'Levotiroxina', 'Sinvastatina', 'Atenolol', 'Diazepam',
+    'Paracetamol',
+    'Ibuprofeno',
+    'Amoxicilina',
+    'Losartana',
+    'Dipirona',
+    'Omeprazol',
+    'Simeticona',
+    'Loratadina',
+    'Azitromicina',
+    'AAS (Ácido Acetilsalicílico)',
+    'Prednisona',
+    'Cefalexina',
+    'Metformina',
+    'Enalapril',
+    'Clonazepam',
+    'Fluoxetina',
+    'Pantoprazol',
+    'Diclofenaco',
+    'Nimesulida',
+    'Cetirizina',
+    'Dexametasona',
+    'Levotiroxina',
+    'Sinvastatina',
+    'Atenolol',
+    'Diazepam',
   ];
 
   final List<String> listaVias = [
-    'Oral (Comprimido)', 'Oral (Gotas)', 'Injetável', 'Tópico (Pomada)', 'Inalação',
+    'Oral (Comprimido)',
+    'Oral (Gotas)',
+    'Injetável',
+    'Tópico (Pomada)',
+    'Inalação',
   ];
 
   final List<String> listaFrequencia = [
-    'A cada 4 horas', 'A cada 6 horas', 'A cada 8 horas', 'A cada 12 horas',
-    '1 vez ao dia (24h)', '2 vez ao dia (24h)', '4 vez ao dia (24)',
+    'A cada 4 horas',
+    'A cada 6 horas',
+    'A cada 8 horas',
+    'A cada 12 horas',
+    '1 vez ao dia (24h)',
+    '2 vezes ao dia (24h)',
+    '4 vezes ao dia (24h)',
   ];
 
-  List<Map<String, dynamic>> tratamentos = [
-    {
-      "paciente": "Sr. Joaquin",
-      "medicamento": "Paracetamol",
-      "via": "Oral (Comprimido)",
-      "dose": "2 comp.",
-      "frequencia": "A cada 8 horas",
-      "estoque": "30",
-      "inicio": "10/09/2026 08:00",
-      "fim": "15/09/2026 08:00",
-      "obs": "Após as refeições"
-    },
-    {
-      "paciente": "Dona Maria",
-      "medicamento": "Losartana",
-      "via": "Oral (Comprimido)",
-      "dose": "1 comp.",
-      "frequencia": "1 vez ao dia (24h)",
-      "estoque": "60",
-      "inicio": "01/09/2026 07:00",
-      "fim": "",
-      "obs": "Em jejum"
-    },
-    {
-      "paciente": "Sr. Carlos",
-      "medicamento": "Dipirona",
-      "via": "Oral (Gotas)",
-      "dose": "40 gotas",
-      "frequencia": "A cada 6 horas",
-      "estoque": "1 frasco",
-      "inicio": "02/09/2026 14:00",
-      "fim": "",
-      "obs": "Apenas se tiver febre ou dor"
-    },
-    {
-      "paciente": "Dona Ana",
-      "medicamento": "Amoxicilina",
-      "via": "Oral (Comprimido)",
-      "dose": "1 comp.",
-      "frequencia": "A cada 8 horas",
-      "estoque": "21",
-      "inicio": "02/09/2026 08:00",
-      "fim": "09/09/2026 08:00",
-      "obs": "Tomar com bastante água"
-    },
-    {
-      "paciente": "Sr. Pedro",
-      "medicamento": "Omeprazol",
-      "via": "Oral (Comprimido)",
-      "dose": "1 comp.",
-      "frequencia": "1 vez ao dia (24h)",
-      "estoque": "30",
-      "inicio": "03/09/2026 06:00",
-      "fim": "",
-      "obs": "30 minutos antes do café da manhã"
-    },
-  ];
+  final ApiService apiService = ApiService();
+  late Future<List<Tratamento>> futureTratamentos;
+
+  @override
+  void initState() {
+    super.initState();
+    futureTratamentos = apiService.getTratamentos();
+  }
+
+  void _recarregarTratamentos() {
+    setState(() {
+      futureTratamentos = apiService.getTratamentos();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,63 +120,107 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 16.0, 
-                            horizontal: isSmallScreen ? 8.0 : 16.0
+                  child: FutureBuilder<List<Tratamento>>(
+                    future: futureTratamentos,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Erro ao carregar tratamentos: ${snapshot.error}',
                           ),
-                          child: DataTable(
-                            columnSpacing: isSmallScreen ? 20.0 : 40.0,
-                            horizontalMargin: isSmallScreen ? 12.0 : 24.0,
-                            headingTextStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0056B3),
-                              fontSize: 15,
-                            ),
-                            // ADICIONADAS AS NOVAS COLUNAS AQUI
-                            columns: const [
-                              DataColumn(label: Text('Paciente')),
-                              DataColumn(label: Text('Medicamento')),
-                              DataColumn(label: Text('Dose')),
-                              DataColumn(label: Text('Frequência')),
-                              DataColumn(label: Text('Início')),
-                              DataColumn(label: Text('Fim')),
-                              DataColumn(label: Text('Ações')),
-                            ],
-                            rows: tratamentos.map((tratamento) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Text(tratamento['paciente'])),
-                                  DataCell(Text(tratamento['medicamento'])),
-                                  DataCell(Text(tratamento['dose'])),
-                                  DataCell(Text(tratamento['frequencia'])),
-                                  DataCell(Text(tratamento['inicio']?.isEmpty ?? true ? '-' : tratamento['inicio'])),
-                                  DataCell(Text(tratamento['fim']?.isEmpty ?? true ? '-' : tratamento['fim'])),
-                                  DataCell(
-                                    IconButton(
-                                      icon: const Icon(Icons.edit, color: Color(0xFF4CAF50), size: 20),
-                                      onPressed: () => _mostrarPopUpEdicao(context, tratamento, isSmallScreen),
-                                    ),
-                                  ),
+                        );
+                      }
+
+                      final tratamentos = snapshot.data ?? [];
+
+                      if (tratamentos.isEmpty) {
+                        return const Center(
+                          child: Text('Nenhum tratamento cadastrado.'),
+                        );
+                      }
+
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 16.0,
+                                horizontal: isSmallScreen ? 8.0 : 16.0,
+                              ),
+                              child: DataTable(
+                                columnSpacing: isSmallScreen ? 20.0 : 40.0,
+                                horizontalMargin: isSmallScreen ? 12.0 : 24.0,
+                                headingTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF0056B3),
+                                  fontSize: 15,
+                                ),
+                                columns: const [
+                                  DataColumn(label: Text('Paciente')),
+                                  DataColumn(label: Text('Medicamento')),
+                                  DataColumn(label: Text('Dose')),
+                                  DataColumn(label: Text('Frequência')),
+                                  DataColumn(label: Text('Início')),
+                                  DataColumn(label: Text('Fim')),
+                                  DataColumn(label: Text('Ações')),
                                 ],
-                              );
-                            }).toList(),
+                                rows: tratamentos.map((tratamento) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(tratamento.paciente)),
+                                      DataCell(Text(tratamento.medicamento)),
+                                      DataCell(Text(tratamento.dose)),
+                                      DataCell(Text(tratamento.frequencia)),
+                                      DataCell(
+                                        Text(
+                                          tratamento.inicio.isEmpty
+                                              ? '-'
+                                              : tratamento.inicio,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          tratamento.fim.isEmpty
+                                              ? '-'
+                                              : tratamento.fim,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.edit,
+                                            color: Color(0xFF4CAF50),
+                                            size: 20,
+                                          ),
+                                          onPressed: () => _mostrarPopUpEdicao(
+                                            context,
+                                            tratamento,
+                                            isSmallScreen,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -199,25 +231,50 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
     );
   }
 
-  void _mostrarPopUpEdicao(BuildContext context, Map<String, dynamic> tratamento, bool isSmallScreen) {
-    TextEditingController nomeController = TextEditingController(text: tratamento['paciente']);
-    TextEditingController quantidadeController = TextEditingController(text: tratamento['dose']);
-    TextEditingController estoqueController = TextEditingController(text: tratamento['estoque']);
-    TextEditingController observacoesController = TextEditingController(text: tratamento['obs']);
-    TextEditingController inicioController = TextEditingController(text: tratamento['inicio']);
-    TextEditingController fimController = TextEditingController(text: tratamento['fim']);
+  void _mostrarPopUpEdicao(
+    BuildContext context,
+    Tratamento tratamento,
+    bool isSmallScreen,
+  ) {
+    TextEditingController nomeController = TextEditingController(
+      text: tratamento.paciente,
+    );
+    TextEditingController quantidadeController = TextEditingController(
+      text: tratamento.dose,
+    );
+    TextEditingController estoqueController = TextEditingController(
+      text: tratamento.estoque,
+    );
+    TextEditingController observacoesController = TextEditingController(
+      text: tratamento.obs,
+    );
+    TextEditingController inicioController = TextEditingController(
+      text: tratamento.inicio,
+    );
+    TextEditingController fimController = TextEditingController(
+      text: tratamento.fim,
+    );
 
-    String? remedioSelecionado = listaRemedios.contains(tratamento['medicamento']) ? tratamento['medicamento'] : null;
-    String? viaSelecionada = listaVias.contains(tratamento['via']) ? tratamento['via'] : null;
-    String? frequenciaSelecionada = listaFrequencia.contains(tratamento['frequencia']) ? tratamento['frequencia'] : null;
+    String? remedioSelecionado = listaRemedios.contains(tratamento.medicamento)
+        ? tratamento.medicamento
+        : null;
+    String? viaSelecionada = listaVias.contains(tratamento.via)
+        ? tratamento.via
+        : null;
+    String? frequenciaSelecionada =
+        listaFrequencia.contains(tratamento.frequencia)
+        ? tratamento.frequencia
+        : null;
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (context, setStateDialog) {
+          builder: (builderContext, setStateDialog) {
             return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               backgroundColor: Colors.white,
               insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 24),
               child: SingleChildScrollView(
@@ -260,7 +317,10 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           flex: 1,
-                          child: _buildTextFieldLocal('Dose', quantidadeController),
+                          child: _buildTextFieldLocal(
+                            'Dose',
+                            quantidadeController,
+                          ),
                         ),
                       ],
                     ),
@@ -273,7 +333,9 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                             'Frequência',
                             frequenciaSelecionada,
                             listaFrequencia,
-                            (val) => setStateDialog(() => frequenciaSelecionada = val),
+                            (val) => setStateDialog(
+                              () => frequenciaSelecionada = val,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -285,11 +347,16 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                               controller: estoqueController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 labelText: 'Estoque',
                                 filled: true,
                                 fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 14,
+                                ),
                               ),
                             ),
                           ),
@@ -308,14 +375,26 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFF3E5F5),
                                 foregroundColor: Colors.deepPurple,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
-                              onPressed: () => _escolherDataHora(inicioController, setStateDialog),
+                              onPressed: () => _escolherDataHora(
+                                builderContext,
+                                inicioController,
+                                setStateDialog,
+                              ),
                               child: Text(
-                                inicioController.text.isEmpty ? 'Início' : 'Início:\n${inicioController.text}',
+                                inicioController.text.isEmpty
+                                    ? 'Início'
+                                    : 'Início:\n${inicioController.text}',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: isSmallScreen ? 11 : 12),
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 11 : 12,
+                                ),
                               ),
                             ),
                           ),
@@ -327,14 +406,26 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFF3E5F5),
                                 foregroundColor: Colors.deepPurple,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
-                              onPressed: () => _escolherDataHora(fimController, setStateDialog),
+                              onPressed: () => _escolherDataHora(
+                                builderContext,
+                                fimController,
+                                setStateDialog,
+                              ),
                               child: Text(
-                                fimController.text.isEmpty ? 'Fim' : 'Fim:\n${fimController.text}',
+                                fimController.text.isEmpty
+                                    ? 'Fim'
+                                    : 'Fim:\n${fimController.text}',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: isSmallScreen ? 11 : 12),
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 11 : 12,
+                                ),
                               ),
                             ),
                           ),
@@ -350,7 +441,9 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                         controller: observacoesController,
                         maxLines: 3,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           labelText: 'Observações médicas',
                           filled: true,
                           fillColor: Colors.white,
@@ -364,36 +457,69 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+                          onPressed: () => Navigator.pop(builderContext),
+                          child: const Text(
+                            'Cancelar',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4CAF50),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                              horizontal: 20,
+                            ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              tratamento['paciente'] = nomeController.text;
-                              tratamento['medicamento'] = remedioSelecionado ?? '';
-                              tratamento['via'] = viaSelecionada ?? '';
-                              tratamento['dose'] = quantidadeController.text;
-                              tratamento['frequencia'] = frequenciaSelecionada ?? '';
-                              tratamento['estoque'] = estoqueController.text;
-                              tratamento['inicio'] = inicioController.text;
-                              tratamento['fim'] = fimController.text;
-                              tratamento['obs'] = observacoesController.text;
-                            });
-                            Navigator.pop(context);
+                          onPressed: () async {
+                            if (tratamento.id == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Tratamento sem id para editar.',
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+
+                            final tratamentoAtualizado = Tratamento(
+                              id: tratamento.id,
+                              paciente: nomeController.text,
+                              medicamento: remedioSelecionado ?? '',
+                              via: viaSelecionada ?? '',
+                              dose: quantidadeController.text,
+                              frequencia: frequenciaSelecionada ?? '',
+                              estoque: estoqueController.text,
+                              inicio: inicioController.text,
+                              fim: fimController.text,
+                              obs: observacoesController.text,
+                            );
+
+                            final sucesso = await apiService.updateTratamento(
+                              tratamento.id!,
+                              tratamentoAtualizado,
+                            );
+
+                            if (!builderContext.mounted) return;
+
+                            if (sucesso) {
+                              _recarregarTratamentos();
+                              Navigator.pop(builderContext, true);
+                            } else {
+                              Navigator.pop(builderContext, false);
+                            }
                           },
                           child: Text(
                             'Salvar',
                             style: TextStyle(
-                              fontSize: isSmallScreen ? 14 : 16, 
-                              fontWeight: FontWeight.bold, 
-                              color: Colors.white
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -409,7 +535,12 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
     );
   }
 
-  Widget _buildDropdownField(String label, String? value, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _buildDropdownField(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<String>(
@@ -419,11 +550,17 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
           labelText: label,
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
         ),
-        value: value,
+        initialValue: value,
         items: items.map((String item) {
-          return DropdownMenuItem<String>(value: item, child: Text(item, overflow: TextOverflow.ellipsis));
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item, overflow: TextOverflow.ellipsis),
+          );
         }).toList(),
         onChanged: onChanged,
       ),
@@ -440,27 +577,34 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
           labelText: label,
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
         ),
       ),
     );
   }
 
-  Future<void> _escolherDataHora(TextEditingController controller, StateSetter setStateDialog) async {
+  Future<void> _escolherDataHora(
+    BuildContext builderContext,
+    TextEditingController controller,
+    StateSetter setStateDialog,
+  ) async {
     DateTime? dataEscolhida = await showDatePicker(
-      context: context,
+      context: builderContext,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
-    if (dataEscolhida != null && context.mounted) {
+    if (dataEscolhida != null && builderContext.mounted) {
       TimeOfDay? horaEscolhida = await showTimePicker(
-        context: context,
+        context: builderContext,
         initialTime: TimeOfDay.now(),
       );
 
-      if (horaEscolhida != null && context.mounted) {
+      if (horaEscolhida != null && builderContext.mounted) {
         setStateDialog(() {
           String dia = dataEscolhida.day.toString().padLeft(2, '0');
           String mes = dataEscolhida.month.toString().padLeft(2, '0');
