@@ -12,3 +12,7 @@ cd ekobelth
 echo "A instalar dependências e a compilar o Flutter Web..."
 flutter pub get
 flutter build web --release
+
+echo "A limpar o Flutter SDK para não exceder o limite do Vercel..."
+cd ..
+rm -rf flutter
