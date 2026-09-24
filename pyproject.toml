@@ -8,3 +8,6 @@ dependencies = [
 
 [tool.vercel]
 entrypoint = "ekobelth.main:app"
+
+[tool.vercel]
+entrypoint = "ekobelth.main:app"
