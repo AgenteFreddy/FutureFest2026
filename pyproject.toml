@@ -11,3 +11,7 @@ entrypoint = "ekobelth.main:app"
 
 [tool.vercel]
 entrypoint = "ekobelth.main:app"
+
+echo '[project]' > pyproject.toml
+echo 'name = "dummy"' >> pyproject.toml
+echo 'version = "0.0.1"' >> pyproject.toml

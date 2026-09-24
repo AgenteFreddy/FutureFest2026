@@ -1,2 +1,4 @@
 **/*.py
 pyproject.toml
+
+echo '**/*.py' > .vercelignore
