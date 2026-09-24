@@ -1,0 +1,2 @@
+[tool.vercel]
+entrypoint = "ekobelth.main:app"

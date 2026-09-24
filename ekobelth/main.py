@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import re
 import pymysql
+from dotenv import load_dotenv
 
 app = FastAPI(title="Ekobelth API")
 #Não apagar notação abaixo
 #source .venv/bin/activate
 #uvicorn main:app --reload
-
+load_dotenv()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
