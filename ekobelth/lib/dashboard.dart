@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'componentes.dart';
 import 'adduser.dart';
 import 'editinfo.dart';
 import 'settings.dart';
@@ -8,10 +7,10 @@ import 'models/tratamento.dart';
 import 'services/api_service.dart';
 import 'providers/theme_provider.dart';
 import 'services/notification_service.dart';
+import 'iaeko.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
-
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
@@ -19,7 +18,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final ApiService apiService = ApiService();
   late Future<List<Tratamento>> futureTratamentos;
-
+  late Future<List<Tratamento>> futureLembretes;
   @override
   void initState() {
     super.initState();
@@ -29,12 +28,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _carregarDados() async {
     setState(() {
       futureTratamentos = apiService.getTratamentos();
+      futureLembretes = apiService.getLembretes();
     });
-
     final tratamentos = await futureTratamentos;
     final notificationService = NotificationService();
     await notificationService.cancelAllNotifications();
-
     for (int i = 0; i < tratamentos.length; i++) {
       final t = tratamentos[i];
       try {
@@ -49,7 +47,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             int.parse(horaPartes[0]),
             int.parse(horaPartes[1]),
           );
-
           if (scheduledDate.isAfter(DateTime.now())) {
             await notificationService.scheduleNotification(
               id: i,
@@ -65,8 +62,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _atualizarDashboard() {
-    _carregarDados();
+  Future<void> _atualizarDashboard() async {
+    await _carregarDados();
   }
 
   @override
@@ -75,105 +72,133 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final isDark = themeProvider.isDarkMode;
     final Color backgroundColor = isDark
         ? Colors.grey[900]!
-        : const Color(0xFFEAF8E5);
+        : const Color(0xFFFBF8EF);
     final Color cardColor = isDark ? Colors.grey[850]! : Colors.white;
     final Color textColor = isDark ? Colors.white : Colors.black;
-
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildTopBar(context, cardColor),
-              const SizedBox(height: 24),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    bool isMobile = constraints.maxWidth < 800;
-
-                    if (isMobile) {
-                      return ListView(
-                        children: [
-                          _buildWelcomeSection(textColor),
-                          const SizedBox(height: 24),
-                          _buildActionMenu(context, cardColor, textColor),
-                          const SizedBox(height: 24),
-                          _buildListaMedicamentos(cardColor, textColor),
-                          const SizedBox(height: 24),
-                          _buildLembretesCustom(cardColor, textColor),
-                        ],
-                      );
-                    } else {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildWelcomeSection(textColor),
-                                const SizedBox(height: 32),
-                                Expanded(
-                                  child: _buildListaMedicamentos(
-                                    cardColor,
-                                    textColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 24),
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildActionMenu(context, cardColor, textColor),
-                                const SizedBox(height: 32),
-                                _buildLembretesCustom(cardColor, textColor),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  },
+      body: Stack(
+        children: [
+          if (!isDark) ...[
+            Positioned(
+              top: 0,
+              left: 0,
+              child: IgnorePointer(
+                child: Image.asset(
+                  'assets/canto2ekobelth.png',
+                  width: 500,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
                 ),
               ),
-            ],
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Image.asset(
+                  'assets/cantoekobelth.png',
+                  width: 500,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: IgnorePointer(
+                child: Image.asset(
+                  'assets/folhaekobelth.png',
+                  width: 110,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
+                ),
+              ),
+            ),
+          ],
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildTopBar(context, cardColor),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        bool isMobile = constraints.maxWidth < 800;
+                        if (isMobile) {
+                          return ListView(
+                            children: [
+                              _buildWelcomeSection(textColor),
+                              const SizedBox(height: 24),
+                              _buildIaEkoBadge(context),
+                              const SizedBox(height: 16),
+                              _buildActionMenu(context, cardColor, textColor),
+                              const SizedBox(height: 24),
+                              _buildListaMedicamentos(cardColor, textColor),
+                              const SizedBox(height: 24),
+                              _buildLembretesCustom(cardColor, textColor),
+                            ],
+                          );
+                        } else {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildWelcomeSection(textColor),
+                                    const SizedBox(height: 32),
+                                    Expanded(
+                                      child: _buildListaMedicamentos(
+                                        cardColor,
+                                        textColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              Expanded(
+                                flex: 4,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildIaEkoBadge(context),
+                                    const SizedBox(height: 16),
+                                    _buildActionMenu(
+                                      context,
+                                      cardColor,
+                                      textColor,
+                                    ),
+                                    const SizedBox(height: 32),
+                                    _buildLembretesCustom(cardColor, textColor),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildTopBar(BuildContext context, Color cardColor) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Expanded(
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: 'Pesquisar',
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
         Container(
           height: 50,
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -183,17 +208,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           child: Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.settings, size: 24),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
-                    ),
-                  );
-                },
-              ),
               IconButton(
                 icon: const Icon(Icons.notifications_none, size: 28),
                 onPressed: () {
@@ -234,6 +248,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: const Icon(Icons.calendar_today, size: 24),
                 onPressed: _abrirCalendarioLembretes,
               ),
+              IconButton(
+                icon: const Icon(Icons.settings, size: 24),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -245,11 +270,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final tratamentos = await apiService.getLembretes();
       if (!mounted) return;
-
       final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
       final isDark = themeProvider.isDarkMode;
       final Color cardColor = isDark ? Colors.grey[850]! : Colors.white;
-
       showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -273,6 +296,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
         SnackBar(content: Text('Erro ao carregar lembretes: $erro')),
       );
     }
+  }
+
+  Widget _buildIaEkoBadge(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const IaEkoScreen()),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFDFF3D8),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          elevation: 0,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/ekologo.png',
+              width: 22,
+              height: 22,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.water_drop,
+                color: Color(0xFF4A9FD1),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'IA Eko',
+              style: TextStyle(
+                color: Color(0xFF4A9FD1),
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildWelcomeSection(Color textColor) {
@@ -319,7 +387,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildListaMedicamentos(Color cardColor, Color textColor) {
+  Widget _buildPatientListCard({
+    required String title,
+    required Future<List<Tratamento>> future,
+    required Color cardColor,
+    required Color textColor,
+    required String emptyMessage,
+  }) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -329,9 +403,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Próximos Medicamentos',
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               fontSize: 22,
               color: Color(0xFF0050A0),
               fontWeight: FontWeight.w500,
@@ -339,29 +413,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 24),
           FutureBuilder<List<Tratamento>>(
-            future: futureTratamentos,
+            future: future,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Text('Erro ao carregar dados: ${snapshot.error}');
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Text('Nenhum tratamento cadastrado.');
+                return Text(
+                  emptyMessage,
+                  style: TextStyle(fontSize: 14, color: textColor),
+                );
               }
-
+              final dados = snapshot.data!;
               return ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data!.length,
+                itemCount: dados.length,
                 itemBuilder: (context, index) {
-                  final t = snapshot.data![index];
-                  String horaExibicao = t.inicio.isNotEmpty
+                  final t = dados[index];
+                  final horaExibicao = t.inicio.isNotEmpty
                       ? t.inicio.split(' ').last
                       : '--:--';
+                  final imagePath = index % 2 == 0
+                      ? 'assets/idoso1.png'
+                      : 'assets/idoso2.jpg';
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: patientRow(
-                      'assets/idoso1.png',
+                      imagePath,
                       t.paciente,
                       t.medicamento,
                       horaExibicao,
@@ -376,68 +456,150 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildListaMedicamentos(Color cardColor, Color textColor) {
+    return _buildPatientListCard(
+      title: 'Próximos Medicamentos',
+      future: futureTratamentos,
+      cardColor: cardColor,
+      textColor: textColor,
+      emptyMessage: 'Nenhum tratamento cadastrado.',
+    );
+  }
+
   Widget _buildActionMenu(
     BuildContext context,
     Color cardColor,
     Color textColor,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          actionItem(Icons.group_add, 'Adicionar', Colors.green, () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AdicionarUsuarioScreen(),
-              ),
-            );
-            if (result == true) _atualizarDashboard();
-          }, textColor: textColor),
-          const SizedBox(height: 16),
-          actionItem(Icons.person, 'Editar', Colors.green, () async {
-            final alterou = await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EditarInfoScreen()),
-            );
-            if (alterou == true) {
-              _atualizarDashboard();
-            }
-          }, textColor: textColor),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: actionItem(
+            Icons.group_add,
+            'Adicionar Usuario',
+            Colors.green,
+            () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdicionarUsuarioScreen(),
+                ),
+              );
+              if (result == true) _atualizarDashboard();
+            },
+            textColor: textColor,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: actionItem(
+            Icons.person,
+            'Editar Info',
+            Colors.green,
+            () async {
+              final alterou = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EditarInfoScreen(),
+                ),
+              );
+              if (alterou == true) {
+                _atualizarDashboard();
+              }
+            },
+            textColor: textColor,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLembretesCustom(Color cardColor, Color textColor) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Lembretes',
-            style: TextStyle(
-              fontSize: 22,
-              color: Color(0xFF0050A0),
-              fontWeight: FontWeight.w500,
-            ),
+    return _buildPatientListCard(
+      title: 'Lembretes',
+      future: futureLembretes,
+      cardColor: cardColor,
+      textColor: textColor,
+      emptyMessage: 'Nenhum lembrete cadastrado.',
+    );
+  }
+
+  Widget patientRow(
+    String imagePath,
+    String name,
+    String medicamento,
+    String time,
+  ) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 24,
+          backgroundImage: AssetImage(imagePath),
+          backgroundColor: Colors.transparent,
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                medicamento,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Nenhum lembrete cadastrado.',
-            style: TextStyle(fontSize: 14, color: textColor),
+        ),
+        Text(
+          time,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget actionItem(
+    IconData icon,
+    String title,
+    Color color,
+    VoidCallback onTap, {
+    required Color textColor,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.1),
+          child: Icon(icon, color: color),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+        ),
+        onTap: onTap,
+        contentPadding: EdgeInsets.zero,
       ),
     );
   }
@@ -445,9 +607,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 class _CalendarioLembretes extends StatefulWidget {
   final List<Tratamento> tratamentos;
-
   const _CalendarioLembretes({required this.tratamentos});
-
   @override
   State<_CalendarioLembretes> createState() => _CalendarioLembretesState();
 }
@@ -455,7 +615,6 @@ class _CalendarioLembretes extends StatefulWidget {
 class _CalendarioLembretesState extends State<_CalendarioLembretes> {
   late DateTime mesAtual;
   late DateTime diaSelecionado;
-
   @override
   void initState() {
     super.initState();
@@ -482,12 +641,10 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
     return widget.tratamentos.where((tratamento) {
       final inicio = _parseData(tratamento.inicio);
       if (inicio == null) return false;
-
       final fim = _parseData(tratamento.fim) ?? inicio;
       final dataInicio = DateTime(inicio.year, inicio.month, inicio.day);
       final dataFim = DateTime(fim.year, fim.month, fim.day);
       final dataDia = DateTime(dia.year, dia.month, dia.day);
-
       return !dataDia.isBefore(dataInicio) && !dataDia.isAfter(dataFim);
     }).toList();
   }
@@ -504,7 +661,6 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
     final textColor = isDark ? Colors.white : Colors.black;
-
     const nomesMeses = [
       'Janeiro',
       'Fevereiro',
@@ -524,7 +680,6 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
     final totalDiasMes = DateTime(mesAtual.year, mesAtual.month + 1, 0).day;
     final espacosAntes = primeiroDiaMes.weekday % 7;
     final tratamentosSelecionados = _tratamentosDoDia(diaSelecionado);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -576,7 +731,6 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
             ),
             itemBuilder: (context, index) {
               if (index < espacosAntes) return const SizedBox.shrink();
-
               final dia = DateTime(
                 mesAtual.year,
                 mesAtual.month,
@@ -584,7 +738,6 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
               );
               final temLembrete = _tratamentosDoDia(dia).isNotEmpty;
               final selecionado = _mesmoDia(dia, diaSelecionado);
-
               return InkWell(
                 borderRadius: BorderRadius.circular(24),
                 onTap: () => setState(() => diaSelecionado = dia),
@@ -635,7 +788,6 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                     final horario = tratamento.inicio.contains(' ')
                         ? tratamento.inicio.split(' ').last
                         : '--:--';
-
                     return ListTile(
                       dense: true,
                       leading: const Icon(
@@ -643,11 +795,11 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                         color: Colors.green,
                       ),
                       title: Text(
-                        tratamento.paciente,
+                        '${tratamento.paciente} - ${tratamento.medicamento}',
                         style: TextStyle(color: textColor),
                       ),
                       subtitle: Text(
-                        '${tratamento.medicamento} • ${tratamento.dose}\n${tratamento.via} • ${tratamento.frequencia}',
+                        '${tratamento.dose}\n${tratamento.via} • ${tratamento.frequencia}',
                         style: TextStyle(color: textColor.withOpacity(0.7)),
                       ),
                       trailing: Text(

@@ -4,11 +4,9 @@ import 'providers/theme_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-
     return Scaffold(
       appBar: AppBar(title: const Text("Configurações")),
       body: ListView(

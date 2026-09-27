@@ -7,7 +7,6 @@ class ApiService {
     'API_BASE_URL',
     defaultValue: 'http://127.0.0.1:8000',
   );
-
   Future<List<Tratamento>> _getListaTratamentos(String endpoint) async {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint/'));
     if (response.statusCode == 200) {
@@ -35,14 +34,22 @@ class ApiService {
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(tratamento.toJson()),
     );
-    return response.statusCode == 200;
+    return response.statusCode == 201;
   }
 
   Future<bool> updateTratamento(int id, Tratamento tratamento) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/tratamentos/$id/'),
+      Uri.parse('$baseUrl/tratamentos/$id'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode(tratamento.toJson()),
+      body: jsonEncode(tratamento.toJsonForUpdate()),
+    );
+    return response.statusCode == 200;
+  }
+
+  Future<bool> deleteTratamento(int id) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/tratamentos/$id'),
+      headers: {"Content-Type": "application/json"},
     );
     return response.statusCode == 200;
   }

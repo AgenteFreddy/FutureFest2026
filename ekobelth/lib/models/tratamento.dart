@@ -9,7 +9,6 @@ class Tratamento {
   final String inicio;
   final String fim;
   final String obs;
-
   Tratamento({
     this.id,
     required this.paciente,
@@ -22,7 +21,6 @@ class Tratamento {
     required this.fim,
     required this.obs,
   });
-
   factory Tratamento.fromJson(Map<String, dynamic> json) {
     return Tratamento(
       id: json['id'],
@@ -37,10 +35,23 @@ class Tratamento {
       obs: json['obs'] ?? '',
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'paciente': paciente,
+      'medicamento': medicamento,
+      'via': via,
+      'dose': dose,
+      'frequencia': frequencia,
+      'estoque': estoque,
+      'inicio': inicio,
+      'fim': fim,
+      'obs': obs,
+    };
+  }
+
+  Map<String, dynamic> toJsonForUpdate() {
+    return {
       'paciente': paciente,
       'medicamento': medicamento,
       'via': via,

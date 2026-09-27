@@ -6,14 +6,10 @@ import 'package:timezone/data/latest.dart' as tz;
 class NotificationService {
   static final NotificationService _notificationService =
       NotificationService._internal();
-
   factory NotificationService() => _notificationService;
-
   NotificationService._internal();
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   Future<void> init() async {
     const initializationSettings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -22,9 +18,7 @@ class NotificationService {
         defaultActionName: 'Abrir notificação',
       ),
     );
-
     tz.initializeTimeZones();
-
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (response) {

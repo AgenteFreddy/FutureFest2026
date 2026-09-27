@@ -55,9 +55,15 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - 'assets/LogoCool.png'
-    - 'assets/idoso1.png'
-    - 'assets/cuidadora.png'
+      - 'assets/bolinhaekobelth.png'
+      - 'assets/canto2ekobelth.png'
+      - 'assets/cantoekobelth.png'
+      - 'assets/cuidadora.png'
+      - 'assets/folhaekobelth.png'
+      - 'assets/idoso1.png'
+      - 'assets/idoso2.jpg'
+      - 'assets/LogoCool.png'
+      - 'assets/ekologo.png'
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
