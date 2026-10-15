@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'services/sessao.dart';
 
 class _ChatMessage {
   final String role;
-  final String content;
-  const _ChatMessage({required this.role, required this.content});
+  String content;
+  _ChatMessage({required this.role, required this.content});
   Map<String, String> toJson() => {'role': role, 'content': content};
 }
 
@@ -20,68 +21,112 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<_ChatMessage> _messages = [];
   bool _isLoading = false;
+  WebSocketChannel? _channel;
+
   static const String _iaBaseUrl = String.fromEnvironment(
     'IA_BASE_URL',
     defaultValue: 'http://127.0.0.1:8001',
   );
+
+  String get _wsUrl => '${_iaBaseUrl.replaceFirst('http', 'ws')}/ws/chat';
+
+  @override
+  void initState() {
+    super.initState();
+    _conectarWebSocket();
+  }
+
+  void _conectarWebSocket() {
+    try {
+      _channel = WebSocketChannel.connect(Uri.parse(_wsUrl));
+      _channel!.stream.listen(
+        (message) {
+
+          if (!mounted) return;
+          final data = jsonDecode(message);
+          if (data['error'] != null) {
+            _adicionarErro(data['error']);
+            setState(() => _isLoading = false);
+          } else if (data['token'] != null) {
+            setState(() {
+              if (_isLoading) {
+                _isLoading = false;
+                _messages.add(_ChatMessage(role: 'assistant', content: ''));
+              }
+              _messages.last.content += data['token'] as String;
+            });
+            _scrollToBottom();
+          } else if (data['done'] == true) {
+            setState(() => _isLoading = false);
+            _scrollToBottom();
+          }
+        },
+        onError: (error) {
+          if (!mounted) return;
+          _adicionarErro('Erro na conexão WebSocket.');
+          setState(() => _isLoading = false);
+        },
+        onDone: () {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+        },
+      );
+    } catch (e) {
+      _adicionarErro('Falha ao inicializar WebSocket.');
+    }
+  }
+
   @override
   void dispose() {
+    _channel?.sink.close();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _enviarMensagem() async {
+  void _enviarMensagem() {
     final texto = _controller.text.trim();
     if (texto.isEmpty || _isLoading) return;
+
+    if (_channel == null || _channel?.closeCode != null) {
+      _conectarWebSocket();
+    }
+
     setState(() {
       _messages.add(_ChatMessage(role: 'user', content: texto));
       _isLoading = true;
     });
+
     _controller.clear();
     _scrollToBottom();
-    try {
-      final response = await http
-          .post(
-            Uri.parse('$_iaBaseUrl/chat'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'mensagem': texto,
-              'historico': _messages.map((m) => m.toJson()).toList(),
-            }),
-          )
-          .timeout(const Duration(seconds: 120));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          _messages.add(
-            _ChatMessage(role: 'assistant', content: data['resposta'] ?? ''),
-          );
-        });
-      } else {
-        _adicionarErro('Erro do servidor (${response.statusCode}).');
-      }
-    } catch (e) {
-      _adicionarErro(
-        'Não foi possível conectar à IA Eko.\n'
-        'Verifique se o backend está rodando:\n'
-        'uvicorn ia_eko_api:app --port 8001',
-      );
-    } finally {
-      setState(() => _isLoading = false);
-      _scrollToBottom();
-    }
+
+    final payload = jsonEncode({
+      'mensagem': texto,
+      'usuario_id': Sessao.usuarioId,
+      'historico': _messages
+          .sublist(0, _messages.length - 1)
+          .map((m) => m.toJson())
+          .toList(),
+    });
+
+    _channel?.sink.add(payload);
   }
 
   void _adicionarErro(String msg) {
+    if (!mounted) return;
     setState(() {
       _messages.add(_ChatMessage(role: 'assistant', content: '⚠️ $msg'));
     });
   }
 
+  bool _scrollAgendado = false;
+
   void _scrollToBottom() {
+    if (_scrollAgendado) return;
+    _scrollAgendado = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
+      _scrollAgendado = false;
+      if (mounted && _scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
@@ -93,6 +138,8 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFE8F5E9),
       body: Stack(
@@ -132,40 +179,43 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
                   padding: const EdgeInsets.only(top: 16.0, left: 16.0),
                   child: Align(
                     alignment: Alignment.topLeft,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.deepPurpleAccent,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(4),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.keyboard_return,
+                        color: Colors.black,
                       ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.keyboard_return,
-                          color: Colors.black,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
                   ),
                 ),
-                Image.asset(
-                  'assets/ekologo.png',
-                  height: 120,
-                  colorBlendMode: BlendMode.screen,
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'IA Eko',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF5AC8FA),
-                    fontFamily: 'ComicSans',
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: isKeyboardOpen ? 40 : 120,
+                  curve: Curves.easeInOut,
+                  child: Image.asset(
+                    'assets/ekologo.png',
+                    colorBlendMode: BlendMode.screen,
                   ),
                 ),
-                const SizedBox(height: 20),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: isKeyboardOpen ? 4 : 16,
+                ),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  style: TextStyle(
+                    fontSize: isKeyboardOpen ? 24 : 48,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF5AC8FA),
+                    fontFamily: 'ComicSans',
+                  ),
+                  child: const Text('EkoIA'),
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: isKeyboardOpen ? 8 : 20,
+                ),
                 Expanded(child: _buildChatBody()),
                 _buildInputBar(),
               ],
@@ -180,7 +230,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
     if (_messages.isEmpty) {
       return Center(
         child: Text(
-          'Pergunte algo sobre saúde\ne cuidados com idosos 🌿',
+          'Pergunte algo',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
         ),
@@ -254,7 +304,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
             SizedBox(width: 10),
-            Text('IA Eko está pensando...', style: TextStyle(fontSize: 13)),
+            Text('EkoIA está pensando...', style: TextStyle(fontSize: 13)),
           ],
         ),
       ),
@@ -272,7 +322,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _enviarMensagem(),
               decoration: InputDecoration(
-                hintText: 'Pergunte à IA Eko...',
+                hintText: 'Pergunte à EkoIA...',
                 hintStyle: TextStyle(color: Colors.grey.shade500),
                 filled: true,
                 fillColor: Colors.white.withValues(alpha: 0.85),

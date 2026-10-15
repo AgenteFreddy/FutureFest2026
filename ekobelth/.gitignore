@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Segurança e Senhas
+.env
+.env.*
+**/android/key.properties
+
+# Python
+.venv/
+__pycache__/
+
+# Flutter locais
+**/android/local.properties
+**/ios/Flutter/Generated.xcconfig

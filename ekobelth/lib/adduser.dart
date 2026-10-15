@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'componentes.dart';
 import 'models/tratamento.dart';
 import 'services/api_service.dart';
+import 'constants/medical_data.dart';
 
 class AdicionarUsuarioScreen extends StatefulWidget {
-  const AdicionarUsuarioScreen({Key? key}) : super(key: key);
+  const AdicionarUsuarioScreen({super.key});
   @override
   _AdicionarUsuarioScreenState createState() => _AdicionarUsuarioScreenState();
 }
@@ -14,53 +14,12 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
   final TextEditingController inicioController = TextEditingController();
   final TextEditingController fimController = TextEditingController();
   final TextEditingController quantidadeController = TextEditingController();
-  final TextEditingController estoqueController = TextEditingController();
   final TextEditingController observacoesController = TextEditingController();
-  final List<String> listaRemedios = [
-    'Paracetamol',
-    'Ibuprofeno',
-    'Amoxicilina',
-    'Losartana',
-    'Dipirona',
-    'Omeprazol',
-    'Simeticona',
-    'Loratadina',
-    'Azitromicina',
-    'AAS (Ácido Acetilsalicílico)',
-    'Prednisona',
-    'Cefalexina',
-    'Metformina',
-    'Enalapril',
-    'Clonazepam',
-    'Fluoxetina',
-    'Pantoprazol',
-    'Diclofenaco',
-    'Nimesulida',
-    'Cetirizina',
-    'Dexametasona',
-    'Levotiroxina',
-    'Sinvastatina',
-    'Atenolol',
-    'Diazepam',
-  ];
+  final List<String> listaRemedios = kMedicamentos;
   String? remedioSelecionado;
-  final List<String> listaVias = [
-    'Oral (Comprimido)',
-    'Oral (Gotas)',
-    'Injetável',
-    'Tópico (Pomada)',
-    'Inalação',
-  ];
+  final List<String> listaVias = kVias;
   String? viaSelecionada;
-  final List<String> listaFrequencia = [
-    'A cada 4 horas',
-    'A cada 6 horas',
-    'A cada 8 horas',
-    'A cada 12 horas',
-    '1 vez ao dia (24h)',
-    '2 vezes ao dia (24h)',
-    '4 vezes ao dia (24h)',
-  ];
+  final List<String> listaFrequencia = kFrequencias;
   String? frequenciaSelecionada;
   InputDecoration _customDecoration(String label) {
     return InputDecoration(
@@ -110,7 +69,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
   ) {
     return DropdownButtonFormField<String>(
       decoration: _customDecoration(label),
-      value: value,
+      initialValue: value,
       icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF4CAF50)),
       items: items.map((String item) {
         return DropdownMenuItem<String>(value: item, child: Text(item));
@@ -180,12 +139,12 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
         );
       },
     );
-    if (dataEscolhida != null && context.mounted) {
+    if (dataEscolhida != null && mounted) {
       TimeOfDay? horaEscolhida = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
       );
-      if (horaEscolhida != null && context.mounted) {
+      if (horaEscolhida != null && mounted) {
         setState(() {
           String dia = dataEscolhida.day.toString().padLeft(2, '0');
           String mes = dataEscolhida.month.toString().padLeft(2, '0');
@@ -212,7 +171,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
               color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
               ],
             ),
             child: const BackButton(color: Color(0xFF0056B3)),
@@ -237,7 +196,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4CAF50).withOpacity(0.15),
+                          color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 5,
                           offset: const Offset(0, 10),
@@ -274,27 +233,15 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                             listaVias,
                             (val) => setState(() => viaSelecionada = val),
                           ),
-                          _buildTextField(
-                            'Dose (ex: 2 comp.)',
-                            quantidadeController,
-                          ),
+                          _buildTextField('Dose', quantidadeController),
                           isMobile,
                         ),
                         const SizedBox(height: 16),
-                        _buildResponsiveRow(
-                          _buildDropdownField(
-                            'Frequência',
-                            frequenciaSelecionada,
-                            listaFrequencia,
-                            (val) =>
-                                setState(() => frequenciaSelecionada = val),
-                          ),
-                          _buildTextField(
-                            'Estoque Total',
-                            estoqueController,
-                            keyboardType: TextInputType.number,
-                          ),
-                          isMobile,
+                        _buildDropdownField(
+                          'Frequência',
+                          frequenciaSelecionada,
+                          listaFrequencia,
+                          (val) => setState(() => frequenciaSelecionada = val),
                         ),
                         const SizedBox(height: 16),
                         _buildResponsiveRow(
@@ -325,7 +272,7 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                             elevation: 4,
                             shadowColor: const Color(
                               0xFF4CAF50,
-                            ).withOpacity(0.5),
+                            ).withValues(alpha: 0.5),
                           ),
                           onPressed: () async {
                             if (nomeController.text.isEmpty ||
@@ -350,7 +297,6 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                               via: viaSelecionada ?? '',
                               dose: quantidadeController.text,
                               frequencia: frequenciaSelecionada ?? '',
-                              estoque: estoqueController.text,
                               inicio: inicioController.text,
                               fim: fimController.text,
                               obs: observacoesController.text,

@@ -1,0 +1,14 @@
+{
+  "name": "ekobelth-showcase",
+  "version": "1.0.0",
+  "description": "Site de apresentação e Pitch da plataforma Ekobélth",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.22.3"
+  }
+}

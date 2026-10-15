@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ekobélth | Gestão & Cuidado Inteligente para ILPIs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            eko: {
+              cream: '#FFFDF8',
+              surface: '#FBF8EF',
+              mint: '#EAF5E1',
+              mintSoft: '#E8F5E9',
+              mintBadge: '#DFF3D8',
+              lime: '#68E365',
+              leaf: '#4CAF50',
+              leafDark: '#2E7D32',
+              forest: '#1B5E20',
+              sky: '#5AC8FA',
+              skyBorder: '#81D4FA',
+              skyInput: '#F5FAFF',
+              blue: '#0050A0',
+              blueDeep: '#0056B3',
+              indigo: '#4A4EDF',
+              ekoia: '#4A9FD1',
+              darkBg: '#212121',
+              darkCard: '#2F2F2F',
+              darkSurface: '#1E1E1E'
+            }
+          },
+          boxShadow: {
+            'eko-card': '0 10px 25px -5px rgba(76, 175, 80, 0.18)',
+            'eko-glow': '0 0 25px rgba(104, 227, 101, 0.35)',
+            'eko-sky': '0 10px 25px -5px rgba(0, 80, 160, 0.15)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAFDF7;
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(104, 227, 101, 0.28);
+    }
+    .dark .glass-card {
+      background: rgba(33, 33, 33, 0.92);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      color: #F3F4F6;
+    }
+    /* Estilo exato do TransparentTextField do Flutter (componentes.dart) */
+    .flutter-glass-input {
+      background: rgba(255, 255, 255, 0.58);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: 30px;
+      transition: all 0.2s ease;
+    }
+    .flutter-glass-input:focus-within {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: #4A4EDF;
+      box-shadow: 0 0 0 3px rgba(74, 78, 223, 0.15);
+    }
+    /* Estilo exato do TransparentButton do Flutter (componentes.dart) */
+    .flutter-glass-btn {
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255, 255, 255, 0.75);
+      border-radius: 30px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flutter-glass-btn:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    /* Inputs clássicos do Flutter (editinfo.dart e adduser.dart) */
+    .flutter-field {
+      background-color: #F5FAFF;
+      border: 1.5px solid #81D4FA;
+      border-radius: 30px;
+      padding: 14px 22px;
+      font-size: 15px;
+      color: #1F2937;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .flutter-field:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    }
+    .dark .flutter-field {
+      background-color: #374151;
+      border-color: #4B5563;
+      color: #F9FAFB;
+    }
+    .dark .flutter-field:focus {
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+    }
+    /* Scrollbars elegantes */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+    /* Animação suave para troca de abas e modais */
+    .fade-enter {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-eko-lime selection:text-slate-900 min-h-screen">
+
+  <!-- NAVBAR FLUTUANTE MODERNA -->
+  <header class="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 md:px-8">
+    <div class="max-w-7xl mx-auto glass-card rounded-full px-4 sm:px-6 h-16 flex items-center justify-between shadow-lg shadow-emerald-950/5">
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        <img src="/assets/ekologo.png" alt="Logo Ekobélth" class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow"
+             onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-gradient-to-tr from-eko-leaf to-eko-sky p-0.5\'><div class=\'w-full h-full bg-white rounded-full flex items-center justify-center text-base\'>🌳</div></div>'" />
+        <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-eko-leafDark">Ekobélth</span>
+      </a>
+
+      <!-- Links Desktop -->
+      <nav class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold text-slate-600">
+        <a href="#introducao" class="hover:text-eko-leaf transition">Introdução</a>
+        <a href="#problema" class="hover:text-eko-leaf transition">Problema</a>
+        <a href="#mascote" class="hover:text-eko-leaf transition">O Eko</a>
+        <a href="#aplicativo" class="hover:text-eko-leaf transition text-eko-leafDark font-bold">Nosso Aplicativo</a>
+        <a href="#potencial" class="hover:text-eko-leaf transition">Mercado (TAM)</a>
+        <a href="#objetivo" class="hover:text-eko-leaf transition">Objetivo</a>
+      </nav>
+
+      <!-- Ações da Navbar -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="#aplicativo" onclick="selecionarAba('eko')" class="bg-gradient-to-r from-eko-leaf to-emerald-600 hover:from-eko-leafDark hover:to-eko-leaf text-white font-bold text-xs sm:text-sm px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md shadow-emerald-500/20 transition flex items-center gap-1.5 sm:gap-2">
+          <span>💧</span>
+          <span class="hidden xs:inline">Testar</span> <span>EkoIA</span>
+        </a>
+
+        <!-- Botão Menu Mobile -->
+        <button onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" aria-label="Abrir Menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Dropdown Mobile -->
+    <div id="mobile-menu" class="hidden lg:hidden mt-2 max-w-7xl mx-auto glass-card rounded-3xl p-5 shadow-2xl border border-emerald-100 flex flex-col gap-3 text-sm font-semibold text-slate-700">
+      <a href="#introducao" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl hover:bg-emerald-50">Introdução</a>
+      <a href="#problema" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl hover:bg-emerald-50">Problema</a>
+      <a href="#mascote" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl hover:bg-emerald-50">O Eko (Mascote)</a>
+      <a href="#aplicativo" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl bg-emerald-50 text-eko-leafDark font-bold">Nosso Aplicativo (App Interativo)</a>
+      <a href="#potencial" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl hover:bg-emerald-50">Potencial de Mercado (TAM/SAM/SOM)</a>
+      <a href="#objetivo" onclick="toggleMobileMenu()" class="py-2 px-3 rounded-xl hover:bg-emerald-50">Nosso Objetivo & Contato</a>
+    </div>
+  </header>
+
+  <!-- SLIDE 1: CAPA EKOBÉLTH -->
+  <section class="relative min-h-[92vh] flex items-center justify-center pt-28 pb-16 sm:pb-20 overflow-hidden">
+    <!-- Cantos orgânicos do PDF e Flutter -->
+    <img src="/assets/canto2ekobelth.png" alt="" class="pointer-events-none absolute -top-8 -left-8 w-64 sm:w-80 md:w-96 opacity-90 select-none" onerror="this.style.display='none'" />
+    <img src="/assets/cantoekobelth.png" alt="" class="pointer-events-none absolute -bottom-10 -right-8 w-64 sm:w-80 md:w-96 opacity-90 select-none" onerror="this.style.display='none'" />
+    <div class="pointer-events-none absolute -top-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-eko-lime/30 blur-3xl"></div>
+    <div class="pointer-events-none absolute top-10 -right-20 w-72 sm:w-80 h-72 sm:h-80 rounded-full bg-eko-sky/30 blur-3xl"></div>
+
+    <!-- Folha decorativa estilo Flutter -->
+    <img src="/assets/folhaekobelth.png" alt="" class="pointer-events-none absolute bottom-6 left-4 sm:left-10 w-28 sm:w-44 md:w-52 opacity-85 select-none" onerror="this.style.display='none'" />
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
+      <!-- Emblema Circular Árvore da Vida / Logo -->
+      <div class="mx-auto mb-6 sm:mb-8 w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-full p-2 bg-gradient-to-tr from-eko-indigo via-eko-lime to-eko-sky shadow-2xl shadow-emerald-500/20 flex items-center justify-center transition-transform hover:scale-105 duration-300">
+        <div class="w-full h-full bg-white rounded-full flex items-center justify-center p-3 sm:p-4 shadow-inner">
+          <img src="/assets/LogoCool.png" alt="Símbolo Ekobélth" class="w-full h-full object-contain"
+               onerror="this.src='/assets/ekologo.png'; this.onerror=null;" />
+        </div>
+      </div>
+
+      <span class="inline-block bg-eko-mint border border-emerald-200 text-eko-forest font-bold text-[11px] sm:text-xs uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4 sm:mb-5 shadow-sm">
+        Plataforma de Gestão & Cuidado Inteligente
+      </span>
+
+      <h1 class="font-display font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-slate-900 mb-4 sm:mb-6">
+        EKOBÉLTH
+      </h1>
+
+      <p class="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-8 sm:mb-10 px-2">
+        Tecnologia humanizada e inteligência artificial para transformar a rotina de cuidadores e Instituições de Longa Permanência para Idosos.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <a href="#aplicativo" class="bg-gradient-to-r from-eko-leaf to-emerald-600 hover:from-eko-leafDark hover:to-eko-leaf text-white font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-xl shadow-emerald-500/25 transition transform hover:-translate-y-0.5 text-sm sm:text-base">
+          📱 Experimentar Aplicativo
+        </a>
+        <a href="#introducao" class="bg-white hover:bg-slate-50 text-slate-800 border-2 border-emerald-200 font-bold px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-sm transition text-sm sm:text-base">
+          Conhecer o Pitch
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDES 2 & 3: INTRODUÇÃO & PROBLEMA -->
+  <section id="introducao" class="py-16 sm:py-24 relative bg-white/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+        <!-- Coluna Esquerda: Collage de Fotos -->
+        <div class="lg:col-span-5 grid grid-cols-2 gap-3 sm:gap-4 relative">
+          <div class="space-y-3 sm:space-y-4">
+            <div class="rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-emerald-100 aspect-[4/5] relative group">
+              <img src="/assets/cuidadora.png" alt="Cuidado ao idoso" class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                   onerror="this.src='https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80'" />
+            </div>
+            <div class="bg-gradient-to-br from-eko-leaf to-eko-leafDark text-white p-5 sm:p-6 rounded-3xl shadow-lg">
+              <p class="font-display font-black text-2xl sm:text-3xl">ILPIs</p>
+              <p class="text-xs font-medium text-emerald-100 mt-1 leading-snug">Instituições de Longa Permanência para Idosos no Brasil</p>
+            </div>
+          </div>
+          <div class="space-y-3 sm:space-y-4 pt-6 sm:pt-8">
+            <div class="bg-gradient-to-br from-eko-sky to-eko-blue text-white p-5 sm:p-6 rounded-3xl shadow-lg">
+              <p class="font-display font-black text-2xl sm:text-3xl">70–80%</p>
+              <p class="text-xs font-medium text-sky-100 mt-1 leading-snug">Ainda operam no papel e planilhas manuais</p>
+            </div>
+            <div class="rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-sky-100 aspect-[4/5] relative group">
+              <img src="/assets/idoso1.png" alt="Idoso sorrindo" class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                   onerror="this.src='https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?auto=format&fit=crop&w=600&q=80'" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Textos oficiais dos Slides 2 e 3 -->
+        <div class="lg:col-span-7 space-y-6 sm:space-y-8">
+          <div class="glass-card rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-36 h-36 bg-eko-lime/20 rounded-full blur-2xl"></div>
+            <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-eko-leafDark bg-eko-mint px-3.5 py-1.5 rounded-full inline-block">
+              Introdução
+            </span>
+            <h2 class="font-display font-black text-xl sm:text-3xl md:text-4xl text-slate-900 mt-4 leading-tight uppercase">
+              <span class="text-eko-leafDark">70% a 80%</span> das casas de repouso no Brasil ainda usam processos manuais, como planilhas e bloco de notas.
+            </h2>
+            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-4 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-eko-leaf"></span>
+              Segundo a Instituição de Longa Permanência para Idosos (ILPIs).
+            </p>
+          </div>
+
+          <div id="problema" class="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border-l-8 border-eko-sky relative overflow-hidden">
+            <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-eko-blueDeep bg-sky-50 px-3.5 py-1.5 rounded-full inline-block">
+              Problema
+            </span>
+            <p class="font-display font-bold text-lg sm:text-2xl text-slate-800 mt-4 leading-relaxed">
+              As instituições que cuidam de idosos precisam garantir que os medicamentos e os cuidadores sejam organizados e adequados para cada pessoa.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDES 4 & 5: INTRODUÇÃO À EKOBÉLTH, MASCOTE EKO & PARA QUEM É -->
+  <section id="mascote" class="py-16 sm:py-24 bg-eko-mintSoft/70 border-y border-emerald-100 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+
+        <!-- Apresentação do Eko -->
+        <div class="lg:col-span-7 space-y-6">
+          <span class="inline-block bg-white text-eko-forest font-extrabold text-[11px] sm:text-xs uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm border border-emerald-200">
+            Introdução à Ekobélth
+          </span>
+          <h2 class="font-display font-black text-2xl sm:text-4xl md:text-5xl text-slate-900 leading-tight">
+            Cuidado personalizado com o poder da nossa IA e nosso mascote: <span class="text-eko-leafDark">o Eko!</span>
+          </h2>
+          <p class="text-base sm:text-lg text-slate-700 leading-relaxed bg-white/85 p-5 sm:p-7 rounded-3xl border border-emerald-200/80 shadow-sm">
+            Por isso, nós da <strong>Ekobélth</strong>, desenvolvemos uma nova plataforma para ajudar as instituições e os cuidadores a gerenciar os cuidados aos idosos de forma personalizada e eficiente junto com o poder da nossa inteligência artificial e nosso mascote: <strong>o Eko</strong>.
+          </p>
+
+          <!-- SLIDE 5: PARA QUEM É? -->
+          <div class="pt-2">
+            <h3 class="font-display font-black text-xs sm:text-sm uppercase tracking-wider text-slate-500 mb-4">
+              Para quem é?
+            </h3>
+            <div class="grid sm:grid-cols-3 gap-3 sm:gap-4">
+              <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-emerald-100 flex items-center gap-3">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-eko-mint text-eko-leafDark flex items-center justify-center text-2xl shrink-0">🩺</div>
+                <span class="font-bold text-slate-800 text-xs sm:text-sm">Cuidadores</span>
+              </div>
+              <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-emerald-100 flex items-center gap-3">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-sky-50 text-eko-blueDeep flex items-center justify-center text-2xl shrink-0">🏛️</div>
+                <span class="font-bold text-slate-800 text-xs sm:text-sm">Instituições de Cuidado</span>
+              </div>
+              <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-emerald-100 flex items-center gap-3">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-eko-mint text-eko-leafDark flex items-center justify-center text-2xl shrink-0">🏡</div>
+                <span class="font-bold text-slate-800 text-xs sm:text-sm">Casas de Repouso</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card do Mascote Eko (Fiel ao Flutter e Slide 4) -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl border-4 border-emerald-200/80 flex flex-col items-center justify-center p-6 sm:p-8 text-center overflow-hidden">
+            <div class="absolute -top-3 sm:-top-4 bg-eko-indigo text-white text-[11px] sm:text-xs font-extrabold px-4 py-1.5 rounded-full shadow">
+              Mascote Oficial & Assistente IA
+            </div>
+            <div class="w-40 h-40 sm:w-48 sm:h-48 my-4 relative flex items-center justify-center">
+              <div class="absolute inset-0 bg-eko-lime/20 rounded-full blur-xl"></div>
+              <img src="/assets/bolinhaekobelth.png" alt="Mascote Eko" class="w-full h-full object-contain drop-shadow-lg relative z-10"
+                   onerror="this.outerHTML='<span class=\'text-7xl\'>💧</span>'" />
+            </div>
+            <h4 class="font-display font-black text-2xl sm:text-3xl text-eko-forest">Olá, eu sou o Eko!</h4>
+            <p class="text-xs sm:text-sm text-slate-500 mt-2 max-w-xs">
+              Sempre pronto para auxiliar cuidadores com dúvidas sobre horários, medicamentos e pacientes em tempo real.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO PRINCIPAL: NOSSO APLICATIVO (REPRODUÇÃO FIEL E INTERATIVA DO FLUTTER LIB) -->
+  <section id="aplicativo" class="py-16 sm:py-24 relative bg-gradient-to-b from-white via-[#FBF8EF] to-white">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6">
+      
+      <!-- Cabeçalho da Seção -->
+      <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+        <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-eko-leafDark bg-eko-mint px-4 py-1.5 rounded-full shadow-sm border border-emerald-200">
+          Experiência Interativa do App Flutter
+        </span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 mt-3">
+          NOSSO APLICATIVO
+        </h2>
+        <p class="text-slate-600 text-sm sm:text-base mt-3 max-w-xl mx-auto">
+          Explore o frontend oficial do app <strong>Ekobélth Cuidador</strong> com dados em tempo real, formulários funcionais, busca, estoque e IA conectada.
+        </p>
+      </div>
+
+      <!-- Barra de Controle do Simulador: Seletor de Telas + Controles de Modo e Dispositivo -->
+      <div class="flex flex-col items-center gap-4 mb-8">
+        
+        <!-- Botões de Navegação entre Telas do Flutter -->
+        <div class="w-full max-w-5xl overflow-x-auto pb-2 scrollbar-none">
+          <div class="flex items-center justify-start sm:justify-center gap-2 min-w-max px-2">
+            <button onclick="selecionarAba('dashboard')" id="btn-dashboard" class="aba-btn bg-eko-leaf text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl shadow-md transition flex items-center gap-1.5">
+              <span>🏠</span> <span>Dashboard</span>
+            </button>
+            <button onclick="selecionarAba('login')" id="btn-login" class="aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <span>🔑</span> <span>Login</span>
+            </button>
+            <button onclick="selecionarAba('editinfo')" id="btn-editinfo" class="aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <span>👤✎</span> <span>Editar Info</span>
+            </button>
+            <button onclick="selecionarAba('estoque')" id="btn-estoque" class="aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <span>📦</span> <span>Estoque</span>
+            </button>
+            <button onclick="selecionarAba('adduser')" id="btn-adduser" class="aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <span>👤+</span> <span>Adicionar Paciente</span>
+            </button>
+            <button onclick="selecionarAba('eko')" id="btn-eko" class="aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5">
+              <span>💧</span> <span>EkoIA Chat</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Ferramentas do Simulador: Alternar Modo Escuro e Simular Tamanho de Tela -->
+        <div class="flex items-center gap-3 text-xs font-semibold text-slate-600 bg-white/90 border border-slate-200 px-4 py-2 rounded-full shadow-sm">
+          <span class="text-slate-400">Simulador:</span>
+          
+          <!-- Botão Modo Escuro (Fiel ao settings.dart do Flutter) -->
+          <button onclick="toggleModoEscuro()" id="btn-dark-toggle" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 transition text-slate-700" title="Alternar Modo Escuro do App">
+            <span id="dark-icon">🌙</span>
+            <span id="dark-text">Modo Escuro</span>
+          </button>
+
+          <span class="text-slate-300">|</span>
+
+          <!-- Modos de Moldura (Desktop, Tablet, Mobile) -->
+          <div class="flex items-center gap-1">
+            <button onclick="setDispositivo('auto')" id="dev-auto" class="dev-btn px-2.5 py-1 rounded-full bg-eko-mint text-eko-leafDark font-bold" title="Largura Fluida (Responsivo)">
+              Fluido
+            </button>
+            <button onclick="setDispositivo('mobile')" id="dev-mobile" class="dev-btn px-2.5 py-1 rounded-full text-slate-600 hover:bg-slate-100" title="Simular Tela de Smartphone">
+              📱 Celular
+            </button>
+            <button onclick="setDispositivo('tablet')" id="dev-tablet" class="dev-btn px-2.5 py-1 rounded-full text-slate-600 hover:bg-slate-100" title="Simular Tablet">
+              📟 Tablet
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MOLDURA EXTERNA DO APLICATIVO (CONTAINER COM TRANSIÇÃO RESPONSIVA) -->
+      <div id="app-frame" class="w-full max-w-5xl mx-auto rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl border-4 sm:border-8 border-white bg-[#FBF8EF] overflow-hidden relative min-h-[580px] transition-all duration-300">
+        
+        <!-- Manchas decorativas nos cantos iguais às do Flutter (dashboard.dart e main.dart) -->
+        <img src="/assets/canto2ekobelth.png" alt="" class="pointer-events-none absolute top-0 left-0 w-60 sm:w-96 opacity-80 select-none z-0" onerror="this.style.display='none'" />
+        <img src="/assets/cantoekobelth.png" alt="" class="pointer-events-none absolute bottom-0 right-0 w-60 sm:w-96 opacity-80 select-none z-0" onerror="this.style.display='none'" />
+        <img src="/assets/folhaekobelth.png" alt="" class="pointer-events-none absolute bottom-0 left-0 w-24 sm:w-32 opacity-80 select-none z-0" onerror="this.style.display='none'" />
+
+        <!-- ========================================== -->
+        <!-- ABA 1: DASHBOARD (dashboard.dart)           -->
+        <!-- ========================================== -->
+        <div id="aba-dashboard" class="aba-conteudo relative z-10 p-4 sm:p-6 md:p-8">
+          
+          <!-- TopBar no canto superior direito (Fiel ao _buildTopBar do Flutter) -->
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-3 py-1 bg-white/80 dark:bg-zinc-800 rounded-full border border-emerald-200/60 dark:border-zinc-700 text-slate-600 dark:text-zinc-300">
+                Área de Trabalho do Cuidador
+              </span>
+            </div>
+
+            <!-- Botões Notificações, Calendário e Configurações -->
+            <div id="topbar-pill" class="bg-white dark:bg-zinc-800 shadow-md rounded-full px-3 py-1.5 flex items-center gap-1 sm:gap-2 border border-slate-100 dark:border-zinc-700">
+              <button onclick="abrirModalNotificacoes()" class="w-9 h-9 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-200 transition" title="Notificações Automáticas">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              </button>
+              <button onclick="abrirModalCalendario()" class="w-9 h-9 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-200 transition" title="Calendário de Lembretes">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </button>
+              <button onclick="abrirModalConfiguracoes()" class="w-9 h-9 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-700 flex items-center justify-center text-slate-700 dark:text-zinc-200 transition" title="Configurações">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Grade Principal Responsiva do Dashboard: Coluna Esquerda (flex:5) + Coluna Direita (flex:4) -->
+          <div class="grid lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Coluna Esquerda: Boas-vindas + Próximos Medicamentos -->
+            <div class="lg:col-span-7 space-y-6">
+              
+              <!-- Seção de Boas-vindas (Fiel ao _buildWelcomeSection do Flutter) -->
+              <div class="flex items-center gap-4 bg-white/90 dark:bg-zinc-800/90 p-4 rounded-3xl shadow-sm border border-slate-100 dark:border-zinc-700">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white dark:border-zinc-700 shadow-md overflow-hidden shrink-0 bg-emerald-50">
+                  <img src="/assets/cuidadora.png" alt="Iza" class="w-full h-full object-cover"
+                       onerror="this.outerHTML='<div class=\'w-full h-full flex items-center justify-center text-3xl\'>👩‍⚕️</div>'" />
+                </div>
+                <div>
+                  <h3 class="font-display font-medium text-2xl sm:text-3xl text-slate-800 dark:text-zinc-100">
+                    Bem-vinda, <span class="font-bold text-eko-leaf">Iza</span>
+                  </h3>
+                  <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-0.5">Cuidadora Responsável • Plantão ILPI</p>
+                </div>
+              </div>
+
+              <!-- Card "Próximos Medicamentos" (_buildPatientListCard do Flutter) -->
+              <div class="app-card bg-white dark:bg-zinc-800 rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-100 dark:border-zinc-700">
+                <div class="flex items-center justify-between mb-5">
+                  <h4 class="font-bold text-lg sm:text-xl text-eko-blue dark:text-sky-400">Próximos Medicamentos</h4>
+                  <span class="text-xs bg-sky-50 dark:bg-zinc-700 text-eko-blue dark:text-sky-300 font-bold px-2.5 py-1 rounded-full">Hoje</span>
+                </div>
+
+                <div id="lista-proximos-medicamentos" class="space-y-3">
+                  <!-- Renderizado dinamicamente via JS com dados reais de tratamentos -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Coluna Direita: EkoIA Badge + Ações Rápidas + Lembretes -->
+            <div class="lg:col-span-5 space-y-5">
+              
+              <!-- Badge Botão EkoIA (Fiel ao _buildIaEkoBadge do Flutter) -->
+              <div class="flex justify-center">
+                <button onclick="selecionarAba('eko')" class="bg-[#DFF3D8] hover:bg-[#cceed0] text-eko-ekoia font-bold text-base sm:text-lg px-6 py-2.5 rounded-full shadow-sm border border-emerald-200/80 flex items-center gap-2.5 transition transform hover:scale-102">
+                  <img src="/assets/ekologo.png" alt="Eko" class="w-5 h-5 object-contain"
+                       onerror="this.outerHTML='<span class=\'text-lg\'>💧</span>'" />
+                  <span>EkoIA</span>
+                </button>
+              </div>
+
+              <!-- Menu de Ações Rápidas (_buildActionMenu do Flutter) -->
+              <div class="space-y-3">
+                <button onclick="selecionarAba('adduser')" class="w-full bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-zinc-700 flex items-center gap-3.5 text-left transition group">
+                  <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-eko-leaf flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition">
+                    👤+
+                  </div>
+                  <div>
+                    <span class="font-bold text-sm text-slate-800 dark:text-zinc-100 block">Adicionar Usuário</span>
+                    <span class="text-[11px] text-slate-400">Cadastrar paciente e prescrição médica</span>
+                  </div>
+                </button>
+
+                <button onclick="selecionarAba('editinfo')" class="w-full bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-zinc-700 flex items-center gap-3.5 text-left transition group">
+                  <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-eko-leaf flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition">
+                    👤✎
+                  </div>
+                  <div>
+                    <span class="font-bold text-sm text-slate-800 dark:text-zinc-100 block">Editar Info</span>
+                    <span class="text-[11px] text-slate-400">Ajustar dosagens, horários e vias</span>
+                  </div>
+                </button>
+
+                <button onclick="selecionarAba('estoque')" class="w-full bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-zinc-700 flex items-center gap-3.5 text-left transition group">
+                  <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-eko-leaf flex items-center justify-center text-lg shrink-0 group-hover:scale-110 transition">
+                    📦
+                  </div>
+                  <div>
+                    <span class="font-bold text-sm text-slate-800 dark:text-zinc-100 block">Estoque</span>
+                    <span class="text-[11px] text-slate-400">Controle de remédios e validade</span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Card "Lembretes" (_buildLembretesCustom do Flutter) -->
+              <div class="app-card bg-white dark:bg-zinc-800 rounded-3xl p-5 shadow-sm border border-slate-100 dark:border-zinc-700">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="font-bold text-base text-eko-blue dark:text-sky-400">Lembretes</h4>
+                  <button onclick="abrirModalCalendario()" class="text-xs text-eko-leaf font-bold hover:underline">Ver no Calendário</button>
+                </div>
+                <div id="lista-lembretes-dashboard" class="space-y-3">
+                  <!-- Renderizado dinamicamente via JS -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: TELA DE LOGIN (main.dart)           -->
+        <!-- ========================================== -->
+        <div id="aba-login" class="aba-conteudo hidden relative z-10 p-4 sm:p-8 md:p-12 min-h-[520px] flex items-center justify-center bg-[#FFFDF8]">
+          <!-- Decorações exatas do LoginScreen de main.dart -->
+          <div class="w-full max-w-4xl mx-auto grid md:grid-cols-12 gap-8 items-center">
+            
+            <!-- Coluna Esquerda: Logo Cool + Títulos em Azul Índigo #4A4EDF -->
+            <div class="md:col-span-6 flex flex-col items-center justify-center text-center">
+              <div class="w-32 h-32 sm:w-44 sm:h-44 mb-2 flex items-center justify-center">
+                <img src="/assets/LogoCool.png" alt="Ekobelth Logo" class="w-full h-full object-contain"
+                     onerror="this.src='/assets/ekologo.png'; this.onerror=null;" />
+              </div>
+              <h3 class="font-display font-bold text-4xl sm:text-5xl text-[#4A4EDF] tracking-tight">
+                Ekobelth
+              </h3>
+              <p class="font-medium text-lg sm:text-xl text-[#4A4EDF] mt-0.5">
+                cuidador
+              </p>
+            </div>
+
+            <!-- Coluna Direita: Formulário Translúcido com Glassmorphism (componentes.dart) -->
+            <div class="md:col-span-6 flex justify-center">
+              <form onsubmit="handleLoginSubmit(event)" class="w-full max-w-sm space-y-4">
+                
+                <!-- TransparentTextField Email -->
+                <div class="flutter-glass-input px-5 py-3.5 flex items-center gap-3">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">Email:</span>
+                  <input id="login-email" type="email" value="iza@ekobelth.com.br" required
+                         class="bg-transparent w-full text-slate-800 text-sm font-semibold focus:outline-none" />
+                </div>
+
+                <!-- TransparentTextField Senha -->
+                <div class="flutter-glass-input px-5 py-3.5 flex items-center gap-3">
+                  <span class="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">Senha:</span>
+                  <input id="login-senha" type="password" value="cuidado123" required
+                         class="bg-transparent w-full text-slate-800 text-sm font-semibold focus:outline-none" />
+                </div>
+
+                <!-- TransparentButton Entrar -->
+                <div class="pt-4 flex justify-center">
+                  <button type="submit" id="btn-login-submit" class="flutter-glass-btn w-full max-w-[240px] py-3.5 text-center font-bold text-slate-800 text-base shadow-sm">
+                    Entrar
+                  </button>
+                </div>
+
+                <p class="text-[11px] text-center text-slate-400 pt-2">
+                  Credenciais de demonstração pré-preenchidas para teste instantâneo.
+                </p>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 3: EDITAR INFORMAÇÕES (editinfo.dart)  -->
+        <!-- ========================================== -->
+        <div id="aba-editinfo" class="aba-conteudo hidden relative z-10 p-4 sm:p-6 md:p-8 bg-[#EAF5E1] min-h-[540px]">
+          
+          <!-- Barra Superior Fiel ao Flutter (AppBar transparente com botão voltar circular) -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <button onclick="selecionarAba('dashboard')" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-eko-blueDeep hover:bg-slate-50 transition" title="Voltar ao Dashboard">
+                ←
+              </button>
+              <h3 class="font-display font-bold text-xl sm:text-2xl text-eko-blueDeep">
+                Editar Informações
+              </h3>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="selecionarAba('adduser')" class="bg-eko-leaf hover:bg-eko-leafDark text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-full shadow-sm flex items-center gap-1.5 transition">
+                <span>+</span> <span>Novo Tratamento</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de Busca + Alternador de Visualização (Cards vs Tabela) -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 mb-6">
+            <div class="relative w-full flex-1">
+              <input id="busca-tratamento" type="text" oninput="filtrarTratamentos(this.value)" placeholder="Buscar por nome do paciente ou medicamento..."
+                     class="w-full bg-white rounded-full pl-11 pr-10 py-3 text-sm text-slate-700 shadow-sm border border-sky-200 focus:outline-none focus:border-eko-leaf" />
+              <span class="absolute left-4 top-3.5 text-eko-blueDeep">🔍</span>
+              <button onclick="limparBuscaTratamento()" id="btn-limpar-busca" class="hidden absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm">✕</button>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 bg-white p-1 rounded-full border border-sky-200 shadow-sm">
+              <button onclick="setModoVisualizacaoTratamentos('cards')" id="btn-view-cards" class="px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition flex items-center gap-1">
+                <span>📇</span> <span>Cards</span>
+              </button>
+              <button onclick="setModoVisualizacaoTratamentos('tabela')" id="btn-view-tabela" class="px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-eko-blueDeep transition flex items-center gap-1">
+                <span>📊</span> <span>Tabela</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Container Branco com Sombra Suave (boxShadow 0xFF4CAF50 alpha 0.15 do Flutter) -->
+          <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-eko-card border border-emerald-100 min-h-[380px]">
+            
+            <!-- Visualização em Cards (_buildCardListView de editinfo.dart) -->
+            <div id="container-cards-tratamento" class="grid sm:grid-cols-2 gap-4">
+              <!-- Renderizado dinamicamente via JS -->
+            </div>
+
+            <!-- Visualização em Tabela (_buildTableView de editinfo.dart) -->
+            <div id="container-tabela-tratamento" class="hidden overflow-x-auto">
+              <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 text-eko-blueDeep font-bold text-xs uppercase tracking-wider">
+                    <th class="py-3 px-4">Paciente</th>
+                    <th class="py-3 px-4">Medicamento</th>
+                    <th class="py-3 px-4">Dose</th>
+                    <th class="py-3 px-4">Frequência</th>
+                    <th class="py-3 px-4">Início</th>
+                    <th class="py-3 px-4">Fim</th>
+                    <th class="py-3 px-4 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-corpo-tratamento" class="divide-y divide-slate-100">
+                  <!-- Renderizado dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="sem-tratamentos" class="hidden text-center py-12 text-slate-400 text-sm">
+              Nenhum tratamento encontrado para sua pesquisa.
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 4: ESTOQUE DE REMÉDIOS (estoque.dart)  -->
+        <!-- ========================================== -->
+        <div id="aba-estoque" class="aba-conteudo hidden relative z-10 p-4 sm:p-6 md:p-8 bg-[#FBF8EF] dark:bg-zinc-900 min-h-[540px]">
+          
+          <!-- Barra Superior Fiel ao EstoqueScreen do Flutter -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <div class="flex items-center gap-3">
+              <button onclick="selecionarAba('dashboard')" class="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center text-eko-blue dark:text-sky-300 hover:bg-slate-50 transition" title="Voltar ao Dashboard">
+                ←
+              </button>
+              <h3 class="font-display font-bold text-xl sm:text-2xl text-eko-blue dark:text-zinc-100">
+                Estoque de Remédios
+              </h3>
+            </div>
+
+            <button onclick="abrirModalAddEstoque()" class="bg-eko-leaf hover:bg-eko-leafDark text-white text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-2xl shadow-sm flex items-center gap-2 transition">
+              <span>+</span> <span>Adicionar Remédio</span>
+            </button>
+          </div>
+
+          <!-- Barra de Pesquisa + Alternador Tabela/Cards do Estoque -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 mb-6">
+            <div class="relative w-full flex-1">
+              <input id="busca-estoque" type="text" oninput="filtrarEstoque(this.value)" placeholder="Pesquisar medicamento no estoque..."
+                     class="w-full bg-white dark:bg-zinc-800 dark:text-zinc-100 rounded-full pl-11 pr-4 py-3 text-sm text-slate-700 shadow-sm border border-slate-200 dark:border-zinc-700 focus:outline-none focus:border-eko-leaf" />
+              <span class="absolute left-4 top-3.5 text-slate-400">🔍</span>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-auto shrink-0 bg-white dark:bg-zinc-800 p-1 rounded-full border border-slate-200 dark:border-zinc-700 shadow-sm">
+              <button onclick="setModoVisualizacaoEstoque('cards')" id="btn-est-cards" class="px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition">
+                Cards
+              </button>
+              <button onclick="setModoVisualizacaoEstoque('tabela')" id="btn-est-tabela" class="px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 dark:text-zinc-300 hover:text-eko-leaf transition">
+                Tabela
+              </button>
+            </div>
+          </div>
+
+          <!-- Container de Dados do Estoque -->
+          <div id="container-cards-estoque" class="grid sm:grid-cols-2 gap-4">
+            <!-- Renderizado dinamicamente via JS com badges de quantidade em verde -->
+          </div>
+
+          <div id="container-tabela-estoque" class="hidden bg-white dark:bg-zinc-800 rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-zinc-700 overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr class="bg-emerald-50 dark:bg-zinc-700 text-eko-blueDeep dark:text-zinc-100 font-bold text-xs uppercase tracking-wider rounded-xl">
+                  <th class="py-3 px-4 rounded-l-xl">Medicamento</th>
+                  <th class="py-3 px-4">Quantidade</th>
+                  <th class="py-3 px-4">Validade</th>
+                  <th class="py-3 px-4">Via</th>
+                  <th class="py-3 px-4 text-center rounded-r-xl">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-corpo-estoque" class="divide-y divide-slate-100 dark:divide-zinc-700 text-slate-700 dark:text-zinc-200">
+                <!-- Renderizado dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- ABA 5: ADICIONAR USUÁRIO / TRATAMENTO (adduser.dart) -->
+        <!-- ==================================================== -->
+        <div id="aba-adduser" class="aba-conteudo hidden relative z-10 p-4 sm:p-6 md:p-10 bg-[#EAF5E1] min-h-[540px]">
+          
+          <div class="flex items-center gap-3 mb-6">
+            <button onclick="selecionarAba('dashboard')" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-eko-blueDeep hover:bg-slate-50 transition" title="Voltar ao Dashboard">
+              ←
+            </button>
+            <h3 class="font-display font-bold text-xl sm:text-2xl text-eko-blueDeep">
+              Adicionar Usuário / Tratamento
+            </h3>
+          </div>
+
+          <!-- Card Centralizado com 32px de raio e sombra suave do Flutter -->
+          <div class="max-w-2xl mx-auto bg-white rounded-[2rem] p-6 sm:p-10 shadow-eko-card border border-emerald-100">
+            <form onsubmit="handleSalvarNovoTratamento(event)" class="space-y-4">
+              
+              <!-- Nome do Paciente -->
+              <div>
+                <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Nome do(a) Paciente *</label>
+                <input id="add-nome" type="text" placeholder="Ex: Dona Sebastiana" required class="flutter-field w-full" />
+              </div>
+
+              <!-- Seleção do Medicamento (kMedicamentos de medical_data.dart) -->
+              <div>
+                <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Medicamento *</label>
+                <select id="add-medicamento" required class="flutter-field w-full bg-white">
+                  <option value="">Selecione o medicamento...</option>
+                  <!-- Populado dinamicamente com kMedicamentos -->
+                </select>
+              </div>
+
+              <!-- Via e Dose (Responsivo em linha/coluna) -->
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Via de Administração</label>
+                  <select id="add-via" class="flutter-field w-full bg-white">
+                    <!-- Populado dinamicamente com kVias -->
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Dose / Quantidade</label>
+                  <input id="add-dose" type="text" placeholder="Ex: 1 comp (500mg)" class="flutter-field w-full" />
+                </div>
+              </div>
+
+              <!-- Frequência (kFrequencias) -->
+              <div>
+                <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Frequência</label>
+                <select id="add-frequencia" class="flutter-field w-full bg-white">
+                  <!-- Populado dinamicamente com kFrequencias -->
+                </select>
+              </div>
+
+              <!-- Período: Início e Fim -->
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Data/Hora de Início</label>
+                  <input id="add-inicio" type="text" placeholder="DD/MM/AAAA HH:MM" class="flutter-field w-full" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Data/Hora de Fim</label>
+                  <input id="add-fim" type="text" placeholder="DD/MM/AAAA HH:MM" class="flutter-field w-full" />
+                </div>
+              </div>
+
+              <!-- Observações -->
+              <div>
+                <label class="block text-xs font-bold text-eko-blueDeep mb-1.5">Observações Médicas</label>
+                <textarea id="add-obs" rows="2" placeholder="Ex: Administrar após o café da manhã..." class="flutter-field w-full rounded-2xl"></textarea>
+              </div>
+
+              <!-- Botão Salvar Tratamento com estilo do Flutter -->
+              <div class="pt-4">
+                <button type="submit" class="w-full bg-eko-leaf hover:bg-eko-leafDark text-white font-bold text-base py-4 rounded-full shadow-lg shadow-emerald-500/25 transition">
+                  Salvar Tratamento
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 6: EKOIA CHAT (iaeko.dart)             -->
+        <!-- ========================================== -->
+        <div id="aba-eko" class="aba-conteudo hidden relative z-10 p-4 sm:p-6 md:p-8 bg-[#E8F5E9] min-h-[540px] flex flex-col justify-between">
+          
+          <!-- Cabeçalho Centralizado EkoIA (Fiel ao iaeko.dart do Flutter) -->
+          <div class="text-center pt-1">
+            <div class="w-16 h-16 mx-auto mb-1 flex items-center justify-center drop-shadow-md">
+              <img src="/assets/bolinhaekobelth.png" alt="EkoIA" class="w-14 h-14 object-contain"
+                   onerror="this.outerHTML='<span class=\'text-5xl\'>💧</span>'" />
+            </div>
+            <h3 class="font-display font-medium text-3xl sm:text-4xl text-[#5AC8FA]">EkoIA</h3>
+            <p class="text-xs text-slate-500 mt-1">Assistente com Inteligência Artificial para Cuidadores de Idosos</p>
+          </div>
+
+          <!-- Caixa de Mensagens do Chat com Bolhas no Padrão do Flutter -->
+          <div id="chat-box" class="my-5 max-w-2xl w-full mx-auto bg-white/80 backdrop-blur-sm rounded-3xl p-4 sm:p-6 h-64 sm:h-72 overflow-y-auto space-y-3 border border-emerald-200/70 shadow-inner text-sm">
+            <div class="text-center text-xs text-slate-400 my-1">Histórico de Conversa</div>
+            
+            <!-- Mensagem Inicial da IA -->
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-base shrink-0 border border-emerald-100">
+                💧
+              </div>
+              <div class="bg-white rounded-2xl rounded-tl-none p-3.5 text-slate-700 shadow-sm border border-emerald-100 max-w-md">
+                Olá, cuidadora <strong>Iza</strong>! Sou o <strong>Eko</strong> 💧. Como posso ajudar com os remédios, horários ou pacientes hoje?
+              </div>
+            </div>
+          </div>
+
+          <!-- Sugestões Rápidas + Input Bar Arredondada (_buildInputBar do Flutter) -->
+          <div class="max-w-2xl w-full mx-auto space-y-3">
+            
+            <!-- Botões de Pergunta Rápida -->
+            <div class="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
+              <button onclick="perguntarRapido('Qual o horário do remédio do João?')" class="text-xs bg-white hover:bg-emerald-50 text-slate-700 font-semibold px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 transition">
+                💊 Horário do João
+              </button>
+              <button onclick="perguntarRapido('Como editar as doses e pacientes?')" class="text-xs bg-white hover:bg-emerald-50 text-slate-700 font-semibold px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 transition">
+                ✏️ Como editar paciente
+              </button>
+              <button onclick="perguntarRapido('Como está o estoque de Amoxicilina?')" class="text-xs bg-white hover:bg-emerald-50 text-slate-700 font-semibold px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 transition">
+                📦 Estoque disponível
+              </button>
+              <button onclick="perguntarRapido('Qual a estatística das ILPIs no Brasil?')" class="text-xs bg-white hover:bg-emerald-50 text-slate-700 font-semibold px-3 py-1.5 rounded-full shadow-sm border border-emerald-100 transition">
+                📊 Dados das ILPIs
+              </button>
+            </div>
+
+            <!-- Form de Envio com Botão Circular Verde -->
+            <form onsubmit="enviarChat(event)" class="flex items-center gap-2 bg-white rounded-full p-1.5 pl-5 shadow-md border border-emerald-200">
+              <input id="chat-input" type="text" placeholder="Pergunte à EkoIA..." autocomplete="off"
+                     class="flex-1 text-sm text-slate-700 placeholder-slate-400 focus:outline-none bg-transparent" />
+              <button type="submit" id="chat-submit-btn" class="w-10 h-10 rounded-full bg-eko-leaf hover:bg-eko-leafDark text-white flex items-center justify-center shadow transition shrink-0" title="Enviar mensagem">
+                ➤
+              </button>
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: CALENDÁRIO DE LEMBRETES (_CalendarioLembretes do Flutter)-->
+  <!-- ============================================================== -->
+  <div id="modal-calendario" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-800 rounded-[25px] p-6 max-w-md w-full shadow-2xl border border-slate-100 dark:border-zinc-700 fade-enter">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="font-bold text-lg text-eko-blue dark:text-sky-300">Calendário de Lembretes</h4>
+        <button onclick="fecharModalCalendario()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-zinc-700 flex items-center justify-center text-slate-500 hover:text-slate-800">✕</button>
+      </div>
+
+      <!-- Navegação de Mês -->
+      <div class="flex items-center justify-between mb-4 bg-slate-50 dark:bg-zinc-700/50 p-2 rounded-2xl">
+        <button onclick="mudarMesCalendario(-1)" class="w-8 h-8 rounded-full hover:bg-white dark:hover:bg-zinc-600 font-bold text-slate-700 dark:text-zinc-200">‹</button>
+        <span id="cal-mes-ano" class="font-bold text-sm text-slate-800 dark:text-zinc-100">Setembro 2026</span>
+        <button onclick="mudarMesCalendario(1)" class="w-8 h-8 rounded-full hover:bg-white dark:hover:bg-zinc-600 font-bold text-slate-700 dark:text-zinc-200">›</button>
+      </div>
+
+      <!-- Grade dos Dias -->
+      <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-2">
+        <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+      </div>
+      <div id="cal-grade-dias" class="grid grid-cols-7 gap-1.5 text-center text-xs">
+        <!-- Gerado dinamicamente -->
+      </div>
+
+      <!-- Detalhes do dia selecionado -->
+      <div class="mt-4 pt-3 border-t border-slate-100 dark:border-zinc-700">
+        <h5 class="text-xs font-bold text-slate-500 dark:text-zinc-400 mb-2" id="cal-detalhe-titulo">Lembretes do dia:</h5>
+        <div id="cal-lista-dia" class="space-y-2 max-h-36 overflow-y-auto text-xs">
+          <!-- Lista de tratamentos do dia -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: NOTIFICAÇÕES AUTOMÁTICAS (Fiel ao showDialog de Flutter)-->
+  <!-- ============================================================== -->
+  <div id="modal-notificacoes" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-800 rounded-[25px] p-6 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-zinc-700 fade-enter">
+      <h4 class="font-bold text-lg text-eko-blue dark:text-sky-300 mb-3">Notificações</h4>
+      <p class="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed mb-5">
+        As notificações automáticas estão ativas para seus medicamentos cadastrados. O sistema emite alertas nos horários programados para cada paciente.
+      </p>
+      <div class="text-right">
+        <button onclick="fecharModalNotificacoes()" class="bg-eko-leaf hover:bg-eko-leafDark text-white text-xs font-bold px-5 py-2.5 rounded-full transition">
+          Entendi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: CONFIGURAÇÕES (Fiel ao settings.dart do Flutter)         -->
+  <!-- ============================================================== -->
+  <div id="modal-configuracoes" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white dark:bg-zinc-800 rounded-[25px] p-6 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-zinc-700 fade-enter">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="font-bold text-lg text-slate-800 dark:text-zinc-100">Configurações</h4>
+        <button onclick="fecharModalConfiguracoes()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-zinc-700 flex items-center justify-center text-slate-500">✕</button>
+      </div>
+      
+      <div class="flex items-center justify-between py-3 border-y border-slate-100 dark:border-zinc-700">
+        <div>
+          <span class="font-bold text-sm text-slate-800 dark:text-zinc-100 block">Modo Escuro</span>
+          <span class="text-xs text-slate-400">Alternar tema escuro e claro</span>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="cfg-dark-switch" onchange="toggleModoEscuro(this.checked)" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:width-5 after:transition-all peer-checked:bg-eko-leaf"></div>
+        </label>
+      </div>
+
+      <div class="mt-4 text-xs text-slate-400">
+        Ekobélth Mobile Platform v1.2 • Flutter Framework
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: EDITAR TRATAMENTO (_mostrarPopUpEdicao do Flutter)      -->
+  <!-- ============================================================== -->
+  <div id="modal-edit-tratamento" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white rounded-[25px] p-6 max-w-lg w-full shadow-2xl border border-slate-100 fade-enter my-8">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="font-bold text-lg text-eko-blueDeep">Editar Tratamento</h4>
+        <button onclick="fecharModalEditTratamento()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">✕</button>
+      </div>
+      <form onsubmit="handleSalvarEdicaoTratamento(event)" class="space-y-3.5">
+        <input type="hidden" id="edit-id" />
+        
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Paciente</label>
+          <input id="edit-paciente" type="text" required class="flutter-field w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Medicamento</label>
+          <select id="edit-medicamento" required class="flutter-field w-full bg-white">
+            <!-- Populado via JS -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Via</label>
+            <select id="edit-via" class="flutter-field w-full bg-white">
+              <!-- Populado via JS -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Dose</label>
+            <input id="edit-dose" type="text" class="flutter-field w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Frequência</label>
+          <select id="edit-frequencia" class="flutter-field w-full bg-white">
+            <!-- Populado via JS -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Início</label>
+            <input id="edit-inicio" type="text" class="flutter-field w-full" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Fim</label>
+            <input id="edit-fim" type="text" class="flutter-field w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Observações</label>
+          <input id="edit-obs" type="text" class="flutter-field w-full" />
+        </div>
+
+        <div class="pt-3 flex gap-2 justify-end">
+          <button type="button" onclick="fecharModalEditTratamento()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-full text-xs font-bold bg-eko-leaf hover:bg-eko-leafDark text-white shadow">
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: ADICIONAR AO ESTOQUE (addestoque.dart do Flutter)       -->
+  <!-- ============================================================== -->
+  <div id="modal-add-estoque" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div class="bg-white rounded-[25px] p-6 max-w-md w-full shadow-2xl border border-slate-100 fade-enter">
+      <div class="flex items-center justify-between mb-4">
+        <h4 class="font-bold text-lg text-eko-blueDeep">Adicionar Novo Remédio</h4>
+        <button onclick="fecharModalAddEstoque()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">✕</button>
+      </div>
+      <form onsubmit="handleSalvarNovoEstoque(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Medicamento *</label>
+          <select id="est-novo-medicamento" required class="flutter-field w-full bg-white">
+            <option value="">Selecione...</option>
+            <!-- Populado via JS -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Via</label>
+            <select id="est-novo-via" class="flutter-field w-full bg-white">
+              <!-- Populado via JS -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-eko-blueDeep mb-1">Quantidade *</label>
+            <input id="est-novo-quantidade" type="text" placeholder="Ex: 20 cápsulas" required class="flutter-field w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Data de Validade</label>
+          <input id="est-novo-validade" type="text" placeholder="DD/MM/AAAA" class="flutter-field w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-eko-blueDeep mb-1">Observações (Opcional)</label>
+          <input id="est-novo-obs" type="text" placeholder="Ex: Lote 4921" class="flutter-field w-full" />
+        </div>
+
+        <div class="pt-3 flex gap-2 justify-end">
+          <button type="button" onclick="fecharModalAddEstoque()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-full text-xs font-bold bg-eko-leaf hover:bg-eko-leafDark text-white shadow">
+            Adicionar ao Estoque
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SLIDES 8 & 9: POTENCIAL DA EKOBÉLTH (TAM, GRÁFICO 2000-2070, SAM & SOM) -->
+  <section id="potencial" class="py-16 sm:py-24 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="mb-10 sm:mb-14">
+        <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-widest text-eko-leafDark bg-eko-mint px-4 py-1.5 rounded-full inline-block">
+          Análise de Mercado
+        </span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl text-slate-900 mt-3">
+          POTENCIAL DA <span class="text-eko-leafDark">EKOBÉLTH</span>
+        </h2>
+      </div>
+
+      <!-- SLIDE 8: TAM + Gráfico Escuro de Crescimento dos Grupos Etários -->
+      <div class="grid lg:grid-cols-12 gap-8 items-center mb-16">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="inline-flex items-center gap-2 bg-slate-900 text-white text-xs font-extrabold px-4 py-1.5 rounded-full">
+            <span>• TAM - (Mercado Total)</span>
+          </div>
+          <ul class="space-y-3.5 text-slate-700 text-sm sm:text-base leading-relaxed pt-2">
+            <li class="flex items-start gap-3 bg-[#FAFDF7] p-4 rounded-2xl border border-emerald-100">
+              <span class="text-eko-leaf font-black text-xl leading-none">•</span>
+              <span><strong>34,1 milhões</strong> de pessoas têm 60 anos ou mais. Os idosos representam <strong>16,1%</strong> da população.</span>
+            </li>
+            <li class="flex items-start gap-3 bg-[#FAFDF7] p-4 rounded-2xl border border-emerald-100">
+              <span class="text-eko-leaf font-black text-xl leading-none">•</span>
+              <span>Em <strong>2030</strong>, <strong>1 em cada 6</strong> pessoas terá 60 anos ou mais.</span>
+            </li>
+            <li class="flex items-start gap-3 bg-[#FAFDF7] p-4 rounded-2xl border border-emerald-100">
+              <span class="text-eko-leaf font-black text-xl leading-none">•</span>
+              <span>Em <strong>2070</strong>, serão cerca de <strong>75,3 milhões de idosos</strong> (<strong>37,8%</strong> da população).</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Gráfico Fiel ao Slide 8 (Fundo escuro #1E1E1E + Curvas 2000 a 2070) -->
+        <div class="lg:col-span-7 bg-[#1E1E1E] text-white rounded-3xl p-5 sm:p-8 shadow-2xl overflow-hidden">
+          <h3 class="font-bold text-base sm:text-lg text-white">Crescimento dos grupos etários</h3>
+          <p class="text-xs text-slate-400 mb-6">Projeção da proporção dos grupos etários na população brasileira de 2000 a 2070</p>
+
+          <div class="relative overflow-x-auto scrollbar-none">
+            <svg viewBox="0 0 650 260" class="w-full h-auto min-w-[460px]">
+              <!-- Linhas de grade horizontais -->
+              <g stroke="#3A3A3A" stroke-width="1">
+                <line x1="45" y1="30" x2="530" y2="30" />
+                <line x1="45" y1="80" x2="530" y2="80" />
+                <line x1="45" y1="130" x2="530" y2="130" />
+                <line x1="45" y1="180" x2="530" y2="180" />
+                <line x1="45" y1="225" x2="530" y2="225" />
+              </g>
+
+              <!-- Linhas verticais dos anos -->
+              <g stroke="#555" stroke-width="1">
+                <line x1="55" y1="20" x2="55" y2="230" />
+                <line x1="210" y1="20" x2="210" y2="230" />
+                <line x1="365" y1="20" x2="365" y2="230" />
+                <line x1="510" y1="20" x2="510" y2="230" />
+              </g>
+
+              <!-- Rótulos Eixo Y -->
+              <g fill="#9CA3AF" font-size="11" text-anchor="end">
+                <text x="40" y="34">40%</text>
+                <text x="40" y="84">30%</text>
+                <text x="40" y="134">20%</text>
+                <text x="40" y="184">10%</text>
+                <text x="40" y="228">0%</text>
+              </g>
+
+              <!-- Rótulos Eixo X (Anos) -->
+              <g fill="#9CA3AF" font-size="12" text-anchor="middle">
+                <text x="55" y="248">2000</text>
+                <text x="210" y="248">2023</text>
+                <text x="365" y="248">2046</text>
+                <text x="510" y="248">2070</text>
+              </g>
+
+              <!-- Curvas do gráfico -->
+              <path d="M55 135 C 160 105, 310 85, 510 98" fill="none" stroke="#6FA8DC" stroke-width="3.5" />
+              <path d="M55 115 C 160 112, 310 130, 510 150" fill="none" stroke="#76A5AF" stroke-width="3.5" />
+              <path d="M55 130 C 160 155, 310 175, 510 182" fill="none" stroke="#8ECAE6" stroke-width="3.5" />
+              <path d="M55 80 C 160 128, 310 160, 510 168" fill="none" stroke="#E63946" stroke-width="3.5" />
+              <path d="M55 182 C 170 170, 330 85, 510 38" fill="none" stroke="#D84B7F" stroke-width="4.5" />
+
+              <!-- Pontos e legendas em 2070 -->
+              <circle cx="510" cy="38" r="6" fill="#D84B7F" stroke="#fff" stroke-width="2" />
+              <circle cx="510" cy="98" r="5" fill="#457B9D" stroke="#fff" stroke-width="2" />
+              <circle cx="510" cy="150" r="5" fill="#457B9D" stroke="#fff" stroke-width="2" />
+              <circle cx="510" cy="168" r="5" fill="#E63946" stroke="#fff" stroke-width="2" />
+              <circle cx="510" cy="182" r="5" fill="#457B9D" stroke="#fff" stroke-width="2" />
+
+              <g font-size="11" font-weight="bold">
+                <text x="522" y="36" fill="#FF85B3">60 anos ou + (38%)</text>
+                <text x="522" y="99" fill="#A8DADC">40-59 anos (26%)</text>
+                <text x="522" y="148" fill="#A8DADC">25-39 anos (15%)</text>
+                <text x="522" y="170" fill="#FCA5A5">0-14 anos (12%)</text>
+                <text x="522" y="188" fill="#A8DADC">15-24 anos (9%)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: SAM & SOM -->
+      <div class="grid md:grid-cols-2 gap-6 sm:gap-8">
+        <!-- SAM -->
+        <div class="bg-eko-mintSoft/80 border-2 border-emerald-200 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          <span class="bg-eko-leafDark text-white text-xs font-extrabold uppercase px-4 py-1.5 rounded-full inline-block">
+            SAM (Mercado Alcançável)
+          </span>
+          <ul class="space-y-3 text-slate-700 mt-6 text-sm sm:text-base">
+            <li class="flex items-start gap-2.5"><span class="text-eko-leaf font-bold">✔</span><span>O Brasil possui entre <strong>6,2 mil e 7,3 mil</strong> instituições de longa permanência para idosos (ILPIs).</span></li>
+            <li class="flex items-start gap-2.5"><span class="text-eko-leaf font-bold">✔</span><span>A demanda por cuidadores está crescendo rapidamente com o envelhecimento demográfico.</span></li>
+            <li class="flex items-start gap-2.5"><span class="text-eko-leaf font-bold">✔</span><span>A digitalização ainda é baixa: <strong>54%</strong> das instituições não possuem sequer site.</span></li>
+            <li class="flex items-start gap-2.5"><span class="text-eko-leaf font-bold">✔</span><span><strong>Menos de 20%</strong> das casas de repouso utilizam sistemas digitais especializados.</span></li>
+          </ul>
+        </div>
+
+        <!-- SOM -->
+        <div class="bg-sky-50/80 border-2 border-sky-200 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+          <span class="bg-eko-blueDeep text-white text-xs font-extrabold uppercase px-4 py-1.5 rounded-full inline-block">
+            SOM (Mercado Acessível)
+          </span>
+          <ul class="space-y-3.5 text-slate-700 mt-6 text-sm sm:text-base">
+            <li class="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-sky-100">
+              <span class="text-2xl">🏥</span>
+              <span>Atender <strong>50 instituições</strong> nos primeiros anos.</span>
+            </li>
+            <li class="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-sky-100">
+              <span class="text-2xl">👵</span>
+              <span>Impactar mais de <strong>2.500 idosos</strong> e centenas de cuidadores.</span>
+            </li>
+            <li class="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-sky-100">
+              <span class="text-2xl">🗺️</span>
+              <span>Expandir gradualmente para as principais capitais do Brasil.</span>
+            </li>
+            <li class="flex items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-sky-100">
+              <span class="text-2xl">⭐</span>
+              <span>Tornar a <strong>Ekobélth</strong> referência nacional em cuidado assistido por IA.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SLIDES 10 & 11: NOSSO OBJETIVO & ENCERRAMENTO COM QR CODE -->
+  <section id="objetivo" class="py-16 sm:py-24 bg-gradient-to-b from-white to-eko-mintSoft relative overflow-hidden">
+    <img src="/assets/folhaekobelth.png" alt="" class="pointer-events-none absolute top-10 right-8 w-40 opacity-75 select-none" onerror="this.style.display='none'" />
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-12 sm:space-y-16 relative z-10">
+      
+      <!-- Slide 10: Nosso Objetivo -->
+      <div class="glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-14 text-center shadow-xl">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-eko-leafDark bg-white px-4 py-1.5 rounded-full shadow-sm border border-emerald-200">
+          Nosso Objetivo
+        </span>
+        <p class="font-display font-bold text-xl sm:text-3xl md:text-4xl text-slate-800 mt-6 leading-relaxed max-w-4xl mx-auto">
+          “A <span class="text-eko-leafDark">Ekobélth</span> busca melhorar o cuidado aos idosos por meio de uma plataforma que oferece atendimento de qualidade. Acreditamos que todos merecem receber os cuidados necessários e ter uma melhor qualidade de vida.”
+        </p>
+      </div>
+
+      <!-- Slide 11: Frase Final + Logo + QR Code -->
+      <div class="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-14 shadow-2xl border border-emerald-100 grid md:grid-cols-12 gap-8 items-center">
+        <div class="md:col-span-7 space-y-4 text-center md:text-left">
+          <div class="inline-flex items-center gap-3">
+            <img src="/assets/LogoCool.png" alt="Logo" class="w-12 h-12 object-contain"
+                 onerror="this.src='/assets/ekologo.png'; this.onerror=null;" />
+            <span class="font-display font-extrabold text-2xl text-eko-leafDark">Ekobélth</span>
+          </div>
+          <h2 class="font-display font-black text-2xl sm:text-4xl md:text-5xl text-slate-900 leading-tight uppercase">
+            Aqui na Ekobélth, <span class="text-eko-leafDark">você vem sempre em primeiro lugar.</span>
+          </h2>
+        </div>
+
+        <div class="md:col-span-5 flex flex-col items-center justify-center">
+          <div class="bg-[#FFFDF8] p-4 sm:p-5 rounded-3xl border-2 border-emerald-300 shadow-md">
+            <img id="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://ekobelth.vercel.app" alt="QR Code Ekobélth" class="w-36 h-36 sm:w-40 sm:h-40 rounded-xl" />
+          </div>
+          <span class="text-xs font-bold text-slate-500 mt-3">Escaneie para acessar o projeto na nuvem</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RODAPÉ -->
+  <footer class="bg-slate-900 text-slate-400 py-8 px-4 text-center text-xs">
+    <p>© 2026 <strong class="text-white">Ekobélth</strong> • Plataforma de Gestão de Cuidados para Idosos e ILPIs</p>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: ESTADO DO APP FLUTTER, DADOS, CHAT E RESPONSIVIDADE-->
+  <!-- ============================================================== -->
+  <script>
+    // -------------------------------------------------------------
+    // Constantes Médicas Fiéis ao Flutter (medical_data.dart)
+    // -------------------------------------------------------------
+    const kMedicamentos = [
+      'Paracetamol', 'Ibuprofeno', 'Amoxicilina', 'Losartana', 'Dipirona',
+      'Omeprazol', 'Simeticona', 'Loratadina', 'Azitromicina', 'AAS (Ácido Acetilsalicílico)',
+      'Prednisona', 'Cefalexina', 'Metformina', 'Enalapril', 'Clonazepam',
+      'Fluoxetina', 'Pantoprazol', 'Diclofenaco', 'Nimesulida', 'Cetirizina',
+      'Dexametasona', 'Levotiroxina', 'Sinvastatina', 'Atenolol', 'Diazepam'
+    ];
+
+    const kVias = [
+      'Oral (Comprimido)', 'Oral (Gotas)', 'Injetável', 'Tópico (Pomada)', 'Inalação'
+    ];
+
+    const kFrequencias = [
+      'A cada 4 horas', 'A cada 6 horas', 'A cada 8 horas', 'A cada 12 horas',
+      '1 vez ao dia (24h)', '2 vezes ao dia (24h)', '4 vezes ao dia (24h)'
+    ];
+
+    // -------------------------------------------------------------
+    // Estado Central do App (Tratamentos e Estoque)
+    // -------------------------------------------------------------
+    let tratamentos = [
+      {
+        id: 1,
+        paciente: "João",
+        medicamento: "Amoxicilina",
+        via: "Oral (Comprimido)",
+        dose: "500mg",
+        frequencia: "A cada 12 horas",
+        inicio: "27/09/2026 19:30",
+        fim: "30/09/2026 19:30",
+        obs: "Administrar após a refeição",
+        avatar: "/assets/idoso1.png"
+      },
+      {
+        id: 2,
+        paciente: "Maria Silva",
+        medicamento: "Losartana",
+        via: "Oral (Comprimido)",
+        dose: "50mg",
+        frequencia: "1 vez ao dia (24h)",
+        inicio: "28/09/2026 08:00",
+        fim: "28/12/2026 08:00",
+        obs: "Em jejum pela manhã",
+        avatar: "/assets/idoso2.jpg"
+      },
+      {
+        id: 3,
+        paciente: "Carlos Alberto",
+        medicamento: "Omeprazol",
+        via: "Oral (Comprimido)",
+        dose: "20mg",
+        frequencia: "1 vez ao dia (24h)",
+        inicio: "28/09/2026 07:00",
+        fim: "15/10/2026 07:00",
+        obs: "30 min antes do café",
+        avatar: "/assets/idoso1.png"
+      }
+    ];
+
+    let estoque = [
+      { id: 1, medicamento: "Amoxicilina", quantidade: "14 cápsulas", via: "Oral (Comprimido)", dataValidade: "15/12/2026", observacoes: "Caixa lacrada" },
+      { id: 2, medicamento: "Losartana", quantidade: "30 comprimidos", via: "Oral (Comprimido)", dataValidade: "10/05/2027", observacoes: "Uso contínuo" },
+      { id: 3, medicamento: "Omeprazol", quantidade: "28 cápsulas", via: "Oral (Comprimido)", dataValidade: "20/08/2027", observacoes: "Controle estrito" },
+      { id: 4, medicamento: "Dipirona", quantidade: "2 frascos (20ml)", via: "Oral (Gotas)", dataValidade: "04/03/2028", observacoes: "Em caso de dor/febre" }
+    ];
+
+    let modoViewTratamentos = 'cards';
+    let modoViewEstoque = 'cards';
+    let filtroTratamento = '';
+    let filtroEstoque = '';
+
+    // Calendário State
+    let calDataAtual = new Date(2026, 8, 27); // Setembro 2026 inicial
+    let calDiaSelecionado = 27;
+
+    // -------------------------------------------------------------
+    // Inicialização da Página
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      popularDropdowns();
+      renderizarDashboard();
+      renderizarTratamentos();
+      renderizarEstoque();
+      renderizarCalendario();
+
+      // Ajusta QR code para a URL atual se disponível
+      const qr = document.getElementById('qr-img');
+      if (qr && window.location.href.startsWith('http')) {
+        qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.href)}`;
+      }
+
+      // Se a tela for pequena, garante visualização em cards automaticamente (como no Flutter)
+      if (window.innerWidth < 768) {
+        setModoVisualizacaoTratamentos('cards');
+        setModoVisualizacaoEstoque('cards');
+      }
+    });
+
+    // Popula selects com as constantes médicas
+    function popularDropdowns() {
+      const popular = (id, lista) => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        select.innerHTML = '<option value="">Selecione...</option>' + 
+          lista.map(item => `<option value="${item}">${item}</option>`).join('');
+      };
+
+      popular('add-medicamento', kMedicamentos);
+      popular('add-via', kVias);
+      popular('add-frequencia', kFrequencias);
+
+      popular('edit-medicamento', kMedicamentos);
+      popular('edit-via', kVias);
+      popular('edit-frequencia', kFrequencias);
+
+      popular('est-novo-medicamento', kMedicamentos);
+      popular('est-novo-via', kVias);
+    }
+
+    // -------------------------------------------------------------
+    // Alternância de Abas do App Flutter
+    // -------------------------------------------------------------
+    function selecionarAba(nome) {
+      document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
+      const alvo = document.getElementById(`aba-${nome}`);
+      if (alvo) {
+        alvo.classList.remove('hidden');
+        alvo.classList.add('fade-enter');
+      }
+
+      document.querySelectorAll('.aba-btn').forEach(btn => {
+        btn.className = 'aba-btn bg-white hover:bg-eko-mint text-slate-700 font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition flex items-center gap-1.5';
+      });
+
+      const btnAtivo = document.getElementById(`btn-${nome}`);
+      if (btnAtivo) {
+        btnAtivo.className = 'aba-btn bg-eko-leaf text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-2xl shadow-md transition flex items-center gap-1.5';
+      }
+    }
+
+    // Menu Mobile da Navbar
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // Simulador de Dispositivo (Fluido / Celular / Tablet)
+    // -------------------------------------------------------------
+    function setDispositivo(tipo) {
+      const frame = document.getElementById('app-frame');
+      document.querySelectorAll('.dev-btn').forEach(b => {
+        b.className = 'dev-btn px-2.5 py-1 rounded-full text-slate-600 hover:bg-slate-100';
+      });
+      const ativo = document.getElementById(`dev-${tipo}`);
+      if (ativo) ativo.className = 'dev-btn px-2.5 py-1 rounded-full bg-eko-mint text-eko-leafDark font-bold';
+
+      if (tipo === 'mobile') {
+        frame.style.maxWidth = '390px';
+      } else if (tipo === 'tablet') {
+        frame.style.maxWidth = '768px';
+      } else {
+        frame.style.maxWidth = '1024px';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Modo Escuro (Fiel ao settings.dart e theme_provider.dart)
+    // -------------------------------------------------------------
+    function toggleModoEscuro(force) {
+      const html = document.documentElement;
+      const isDark = typeof force === 'boolean' ? force : !html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+
+      const icon = document.getElementById('dark-icon');
+      const text = document.getElementById('dark-text');
+      const toggleSwitch = document.getElementById('cfg-dark-switch');
+
+      if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+      if (text) text.textContent = isDark ? 'Modo Claro' : 'Modo Escuro';
+      if (toggleSwitch) toggleSwitch.checked = isDark;
+    }
+
+    // -------------------------------------------------------------
+    // Renderização do Dashboard
+    // -------------------------------------------------------------
+    function renderizarDashboard() {
+      const containerMed = document.getElementById('lista-proximos-medicamentos');
+      const containerLemb = document.getElementById('lista-lembretes-dashboard');
+
+      if (!containerMed || !containerLemb) return;
+
+      containerMed.innerHTML = tratamentos.map((t, idx) => {
+        const hora = t.inicio ? t.inicio.split(' ')[1] || '19:30' : '19:30';
+        const avatarSrc = t.avatar || (idx % 2 === 0 ? '/assets/idoso1.png' : '/assets/idoso2.jpg');
+        return `
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-zinc-700/50 hover:bg-emerald-50/70 dark:hover:bg-zinc-700 transition">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <img src="${avatarSrc}" alt="${t.paciente}" class="w-11 h-11 rounded-full object-cover shrink-0 border border-white shadow-sm"
+                   onerror="this.outerHTML='<div class=\\'w-11 h-11 rounded-full bg-slate-200 flex items-center justify-center text-lg\\'>👴</div>'" />
+              <div class="min-w-0">
+                <p class="font-bold text-slate-800 dark:text-zinc-100 text-sm truncate">${t.paciente}</p>
+                <p class="text-xs text-slate-400 dark:text-zinc-400 truncate">${t.medicamento} • ${t.dose || 'Dose padrão'}</p>
+              </div>
+            </div>
+            <span class="text-sm font-bold text-slate-700 dark:text-zinc-200 shrink-0 ml-3 bg-white dark:bg-zinc-800 px-3 py-1 rounded-full shadow-xs border border-slate-100 dark:border-zinc-600">${hora}</span>
+          </div>
+        `;
+      }).join('');
+
+      containerLemb.innerHTML = tratamentos.map((t, idx) => {
+        const hora = t.inicio ? t.inicio.split(' ')[1] || '19:30' : '19:30';
+        const avatarSrc = t.avatar || (idx % 2 === 0 ? '/assets/idoso1.png' : '/assets/idoso2.jpg');
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-700/40">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <img src="${avatarSrc}" alt="${t.paciente}" class="w-8 h-8 rounded-full object-cover shrink-0"
+                   onerror="this.outerHTML='<div class=\\'w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs\\'>👴</div>'" />
+              <div class="min-w-0">
+                <p class="font-bold text-xs text-slate-800 dark:text-zinc-100 truncate">${t.paciente}</p>
+                <p class="text-[11px] text-slate-400 truncate">${t.medicamento}</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold text-slate-600 dark:text-zinc-300 shrink-0">${hora}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // -------------------------------------------------------------
+    // Renderização de Editar Informações (Cards e Tabela)
+    // -------------------------------------------------------------
+    function renderizarTratamentos() {
+      const containerCards = document.getElementById('container-cards-tratamento');
+      const tabelaCorpo = document.getElementById('tabela-corpo-tratamento');
+      const msgVazio = document.getElementById('sem-tratamentos');
+
+      const filtrados = tratamentos.filter(t => {
+        if (!filtroTratamento) return true;
+        const q = filtroTratamento.toLowerCase();
+        return t.paciente.toLowerCase().includes(q) || t.medicamento.toLowerCase().includes(q);
+      });
+
+      if (msgVazio) {
+        msgVazio.classList.toggle('hidden', filtrados.length > 0);
+      }
+
+      // Renderiza Cards (Idêntico ao _buildCardListView do Flutter)
+      if (containerCards) {
+        containerCards.innerHTML = filtrados.map(t => `
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-sky-200/70 hover:shadow-md transition">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-eko-mint text-eko-leaf flex items-center justify-center font-bold text-sm">
+                  👤
+                </div>
+                <span class="font-bold text-base text-eko-blueDeep">${t.paciente}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button onclick="abrirModalEditTratamento(${t.id})" class="w-8 h-8 rounded-full bg-emerald-50 hover:bg-emerald-100 text-eko-leaf flex items-center justify-center text-xs font-bold transition" title="Editar">
+                  ✏️
+                </button>
+                <button onclick="excluirTratamento(${t.id})" class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold transition" title="Excluir">
+                  🗑️
+                </button>
+              </div>
+            </div>
+
+            <!-- Chips de Medicamento e Dose -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-xl text-xs font-semibold bg-[#F5FAFF] text-eko-blueDeep border border-sky-200 flex items-center gap-1">
+                <span>💊</span> ${t.medicamento}
+              </span>
+              ${t.dose ? `<span class="px-2.5 py-1 rounded-xl text-xs font-semibold bg-eko-mint text-eko-leafDark border border-emerald-300">💉 ${t.dose}</span>` : ''}
+            </div>
+
+            <!-- Informações adicionais de Via, Frequência e Período -->
+            <div class="bg-slate-50 p-3 rounded-xl space-y-1.5 text-xs text-slate-600">
+              ${t.via ? `<div><strong class="text-eko-blueDeep">Via:</strong> ${t.via}</div>` : ''}
+              ${t.frequencia ? `<div><strong class="text-eko-blueDeep">Frequência:</strong> ${t.frequencia}</div>` : ''}
+              ${t.inicio ? `<div><strong class="text-eko-blueDeep">Período:</strong> ${t.inicio} ➔ ${t.fim || '-'}</div>` : ''}
+              ${t.obs ? `<div><strong class="text-eko-blueDeep">Obs:</strong> ${t.obs}</div>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Renderiza Tabela (Idêntico ao _buildTableView do Flutter)
+      if (tabelaCorpo) {
+        tabelaCorpo.innerHTML = filtrados.map(t => `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4 font-semibold text-slate-800">${t.paciente}</td>
+            <td class="py-3 px-4">
+              <span class="bg-sky-50 text-eko-blueDeep font-bold px-2.5 py-1 rounded-lg text-xs border border-sky-100">${t.medicamento}</span>
+            </td>
+            <td class="py-3 px-4 text-slate-600 text-xs">${t.dose || '-'}</td>
+            <td class="py-3 px-4 text-slate-600 text-xs">${t.frequencia || '-'}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${t.inicio || '-'}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${t.fim || '-'}</td>
+            <td class="py-3 px-4 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="abrirModalEditTratamento(${t.id})" class="text-eko-leaf hover:text-eko-leafDark font-bold text-sm">✏️</button>
+                <button onclick="excluirTratamento(${t.id})" class="text-red-500 hover:text-red-700 font-bold text-sm">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function filtrarTratamentos(query) {
+      filtroTratamento = query;
+      document.getElementById('btn-limpar-busca').classList.toggle('hidden', !query);
+      renderizarTratamentos();
+    }
+
+    function limparBuscaTratamento() {
+      const input = document.getElementById('busca-tratamento');
+      if (input) input.value = '';
+      filtrarTratamentos('');
+    }
+
+    function setModoVisualizacaoTratamentos(modo) {
+      modoViewTratamentos = modo;
+      const cCards = document.getElementById('container-cards-tratamento');
+      const cTabela = document.getElementById('container-tabela-tratamento');
+      const bCards = document.getElementById('btn-view-cards');
+      const bTabela = document.getElementById('btn-view-tabela');
+
+      if (modo === 'tabela') {
+        cCards.classList.add('hidden');
+        cTabela.classList.remove('hidden');
+        bTabela.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition flex items-center gap-1';
+        bCards.className = 'px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-eko-blueDeep transition flex items-center gap-1';
+      } else {
+        cTabela.classList.add('hidden');
+        cCards.classList.remove('hidden');
+        bCards.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition flex items-center gap-1';
+        bTabela.className = 'px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:text-eko-blueDeep transition flex items-center gap-1';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Renderização do Estoque de Remédios (estoque.dart)
+    // -------------------------------------------------------------
+    function renderizarEstoque() {
+      const containerCards = document.getElementById('container-cards-estoque');
+      const tabelaCorpo = document.getElementById('tabela-corpo-estoque');
+
+      const filtrados = estoque.filter(item => {
+        if (!filtroEstoque) return true;
+        return item.medicamento.toLowerCase().includes(filtroEstoque.toLowerCase());
+      });
+
+      if (containerCards) {
+        containerCards.innerHTML = filtrados.map(item => `
+          <div class="bg-white dark:bg-zinc-800 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-zinc-700">
+            <div class="flex items-center justify-between mb-2">
+              <h5 class="font-bold text-base text-eko-blue dark:text-sky-300">${item.medicamento}</h5>
+              <div class="flex items-center gap-2">
+                <span class="bg-emerald-50 dark:bg-emerald-950/40 text-eko-leaf font-bold px-2.5 py-1 rounded-xl text-xs">
+                  ${item.quantidade}
+                </span>
+                <button onclick="excluirEstoque(${item.id})" class="text-red-500 hover:text-red-700 text-sm" title="Excluir do estoque">🗑️</button>
+              </div>
+            </div>
+            <div class="space-y-1 text-xs text-slate-500 dark:text-zinc-400">
+              <p>📅 Validade: <strong>${item.dataValidade || 'N/A'}</strong></p>
+              <p>💉 Via: <strong>${item.via || 'N/A'}</strong></p>
+              ${item.observacoes ? `<p>📝 Obs: ${item.observacoes}</p>` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (tabelaCorpo) {
+        tabelaCorpo.innerHTML = filtrados.map(item => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-zinc-700/50 transition">
+            <td class="py-3 px-4 font-bold text-slate-800 dark:text-zinc-100">${item.medicamento}</td>
+            <td class="py-3 px-4">
+              <span class="bg-emerald-50 dark:bg-emerald-950/40 text-eko-leaf font-bold px-2.5 py-1 rounded-xl text-xs">
+                ${item.quantidade}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-xs">${item.dataValidade || 'N/A'}</td>
+            <td class="py-3 px-4 text-xs">${item.via || 'N/A'}</td>
+            <td class="py-3 px-4 text-center">
+              <button onclick="excluirEstoque(${item.id})" class="text-red-500 hover:text-red-700 text-sm">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function filtrarEstoque(val) {
+      filtroEstoque = val;
+      renderizarEstoque();
+    }
+
+    function setModoVisualizacaoEstoque(modo) {
+      modoViewEstoque = modo;
+      const cCards = document.getElementById('container-cards-estoque');
+      const cTabela = document.getElementById('container-tabela-estoque');
+      const bCards = document.getElementById('btn-est-cards');
+      const bTabela = document.getElementById('btn-est-tabela');
+
+      if (modo === 'tabela') {
+        cCards.classList.add('hidden');
+        cTabela.classList.remove('hidden');
+        bTabela.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition';
+        bCards.className = 'px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 dark:text-zinc-300 hover:text-eko-leaf transition';
+      } else {
+        cTabela.classList.add('hidden');
+        cCards.classList.remove('hidden');
+        bCards.className = 'px-3 py-1.5 rounded-full text-xs font-bold bg-eko-leaf text-white transition';
+        bTabela.className = 'px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 dark:text-zinc-300 hover:text-eko-leaf transition';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Formulário Adicionar Novo Tratamento (adduser.dart)
+    // -------------------------------------------------------------
+    function handleSalvarNovoTratamento(e) {
+      e.preventDefault();
+      const paciente = document.getElementById('add-nome').value.trim();
+      const medicamento = document.getElementById('add-medicamento').value;
+      const via = document.getElementById('add-via').value;
+      const dose = document.getElementById('add-dose').value.trim();
+      const frequencia = document.getElementById('add-frequencia').value;
+      const inicio = document.getElementById('add-inicio').value.trim() || '28/09/2026 14:00';
+      const fim = document.getElementById('add-fim').value.trim() || '05/10/2026 14:00';
+      const obs = document.getElementById('add-obs').value.trim();
+
+      if (!paciente || !medicamento) {
+        alert('Por favor, informe ao menos o nome do paciente e o medicamento.');
+        return;
+      }
+
+      const novo = {
+        id: Date.now(),
+        paciente,
+        medicamento,
+        via,
+        dose,
+        frequencia,
+        inicio,
+        fim,
+        obs,
+        avatar: tratamentos.length % 2 === 0 ? '/assets/idoso1.png' : '/assets/idoso2.jpg'
+      };
+
+      tratamentos.unshift(novo);
+      renderizarDashboard();
+      renderizarTratamentos();
+      renderizarCalendario();
+
+      // Limpa form
+      e.target.reset();
+
+      // Notifica e redireciona ao Dashboard
+      selecionarAba('dashboard');
+    }
+
+    // -------------------------------------------------------------
+    // Edição e Exclusão de Tratamento
+    // -------------------------------------------------------------
+    function abrirModalEditTratamento(id) {
+      const t = tratamentos.find(item => item.id === id);
+      if (!t) return;
+
+      document.getElementById('edit-id').value = t.id;
+      document.getElementById('edit-paciente').value = t.paciente;
+      document.getElementById('edit-medicamento').value = t.medicamento;
+      document.getElementById('edit-via').value = t.via || '';
+      document.getElementById('edit-dose').value = t.dose || '';
+      document.getElementById('edit-frequencia').value = t.frequencia || '';
+      document.getElementById('edit-inicio').value = t.inicio || '';
+      document.getElementById('edit-fim').value = t.fim || '';
+      document.getElementById('edit-obs').value = t.obs || '';
+
+      document.getElementById('modal-edit-tratamento').classList.remove('hidden');
+    }
+
+    function fecharModalEditTratamento() {
+      document.getElementById('modal-edit-tratamento').classList.add('hidden');
+    }
+
+    function handleSalvarEdicaoTratamento(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('edit-id').value);
+      const index = tratamentos.findIndex(t => t.id === id);
+      if (index === -1) return;
+
+      tratamentos[index].paciente = document.getElementById('edit-paciente').value;
+      tratamentos[index].medicamento = document.getElementById('edit-medicamento').value;
+      tratamentos[index].via = document.getElementById('edit-via').value;
+      tratamentos[index].dose = document.getElementById('edit-dose').value;
+      tratamentos[index].frequencia = document.getElementById('edit-frequencia').value;
+      tratamentos[index].inicio = document.getElementById('edit-inicio').value;
+      tratamentos[index].fim = document.getElementById('edit-fim').value;
+      tratamentos[index].obs = document.getElementById('edit-obs').value;
+
+      fecharModalEditTratamento();
+      renderizarDashboard();
+      renderizarTratamentos();
+      renderizarCalendario();
+    }
+
+    function excluirTratamento(id) {
+      if (confirm('Deseja realmente remover este tratamento?')) {
+        tratamentos = tratamentos.filter(t => t.id !== id);
+        renderizarDashboard();
+        renderizarTratamentos();
+        renderizarCalendario();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Adicionar e Excluir Estoque
+    // -------------------------------------------------------------
+    function abrirModalAddEstoque() {
+      document.getElementById('modal-add-estoque').classList.remove('hidden');
+    }
+
+    function fecharModalAddEstoque() {
+      document.getElementById('modal-add-estoque').classList.add('hidden');
+    }
+
+    function handleSalvarNovoEstoque(e) {
+      e.preventDefault();
+      const medicamento = document.getElementById('est-novo-medicamento').value;
+      const quantidade = document.getElementById('est-novo-quantidade').value.trim();
+      const via = document.getElementById('est-novo-via').value;
+      const dataValidade = document.getElementById('est-novo-validade').value.trim() || '01/01/2027';
+      const observacoes = document.getElementById('est-novo-obs').value.trim();
+
+      estoque.unshift({
+        id: Date.now(),
+        medicamento,
+        quantidade,
+        via,
+        dataValidade,
+        observacoes
+      });
+
+      fecharModalAddEstoque();
+      renderizarEstoque();
+      e.target.reset();
+    }
+
+    function excluirEstoque(id) {
+      if (confirm('Tem certeza que deseja excluir este item do estoque?')) {
+        estoque = estoque.filter(item => item.id !== id);
+        renderizarEstoque();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Calendário de Lembretes (_CalendarioLembretes do Flutter)
+    // -------------------------------------------------------------
+    function abrirModalCalendario() {
+      renderizarCalendario();
+      document.getElementById('modal-calendario').classList.remove('hidden');
+    }
+
+    function fecharModalCalendario() {
+      document.getElementById('modal-calendario').classList.add('hidden');
+    }
+
+    function mudarMesCalendario(offset) {
+      calDataAtual = new Date(calDataAtual.getFullYear(), calDataAtual.getMonth() + offset, 1);
+      renderizarCalendario();
+    }
+
+    function renderizarCalendario() {
+      const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const ano = calDataAtual.getFullYear();
+      const mes = calDataAtual.getMonth();
+
+      const rotulo = document.getElementById('cal-mes-ano');
+      if (rotulo) rotulo.textContent = `${meses[mes]} ${ano}`;
+
+      const grade = document.getElementById('cal-grade-dias');
+      if (!grade) return;
+
+      grade.innerHTML = '';
+
+      const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
+      const totalDias = new Date(ano, mes + 1, 0).getDate();
+
+      // Dias vazios antes do dia 1
+      for (let i = 0; i < primeiroDiaSemana; i++) {
+        const span = document.createElement('span');
+        span.className = 'py-1.5 text-slate-300';
+        grade.appendChild(span);
+      }
+
+      // Dias do mês
+      for (let dia = 1; dia <= totalDias; dia++) {
+        const btn = document.createElement('button');
+        const isSel = (dia === calDiaSelecionado);
+        
+        // Verifica se há tratamento agendado para o dia
+        const temRemedio = (mes === 8 && dia >= 27 && dia <= 30); // Setembro 2026 demo
+
+        btn.className = `py-1.5 rounded-xl font-bold transition flex flex-col items-center justify-center relative ${
+          isSel 
+            ? 'bg-eko-leaf text-white shadow-sm' 
+            : 'hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200'
+        }`;
+        btn.innerHTML = `<span>${dia}</span>${temRemedio ? `<span class="w-1.5 h-1.5 rounded-full ${isSel ? 'bg-white' : 'bg-eko-leaf'} mt-0.5"></span>` : ''}`;
+        
+        btn.onclick = () => {
+          calDiaSelecionado = dia;
+          renderizarCalendario();
+        };
+
+        grade.appendChild(btn);
+      }
+
+      // Detalhe do dia
+      const listaDia = document.getElementById('cal-lista-dia');
+      const tituloDia = document.getElementById('cal-detalhe-titulo');
+      if (tituloDia) tituloDia.textContent = `Lembretes para ${calDiaSelecionado} de ${meses[mes]}:`;
+
+      if (listaDia) {
+        if (mes === 8 && calDiaSelecionado >= 27 && calDiaSelecionado <= 30) {
+          listaDia.innerHTML = tratamentos.map(t => `
+            <div class="p-2 rounded-xl bg-slate-50 dark:bg-zinc-700/60 flex items-center justify-between">
+              <div>
+                <strong>${t.paciente}</strong>: ${t.medicamento} (${t.dose || 'Dose padrão'})
+              </div>
+              <span class="text-eko-leaf font-bold">${t.inicio ? t.inicio.split(' ')[1] : '19:30'}</span>
+            </div>
+          `).join('');
+        } else {
+          listaDia.innerHTML = '<span class="text-slate-400">Nenhum medicamento agendado para este dia.</span>';
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Modais de Notificações e Configurações
+    // -------------------------------------------------------------
+    function abrirModalNotificacoes() {
+      document.getElementById('modal-notificacoes').classList.remove('hidden');
+    }
+    function fecharModalNotificacoes() {
+      document.getElementById('modal-notificacoes').classList.add('hidden');
+    }
+
+    function abrirModalConfiguracoes() {
+      document.getElementById('modal-configuracoes').classList.remove('hidden');
+    }
+    function fecharModalConfiguracoes() {
+      document.getElementById('modal-configuracoes').classList.add('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // Login Screen Handler (main.dart)
+    // -------------------------------------------------------------
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-login-submit');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="inline-block animate-spin mr-2">⏳</span> Conectando...`;
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        selecionarAba('dashboard');
+      }, 450);
+    }
+
+    // -------------------------------------------------------------
+    // Chat EkoIA (iaeko.dart + API Node /api/eko)
+    // -------------------------------------------------------------
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+
+    function renderizarBolhaChat(texto, isUser = false) {
+      const div = document.createElement('div');
+      div.className = `flex items-start gap-2.5 ${isUser ? 'justify-end' : ''} fade-enter`;
+      
+      div.innerHTML = isUser
+        ? `<div class="bg-eko-leaf text-white font-semibold rounded-2xl rounded-tr-none px-4 py-2.5 max-w-sm sm:max-w-md shadow-sm text-sm">${texto}</div>`
+        : `<div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-base shrink-0 border border-emerald-100">💧</div>
+           <div class="bg-white rounded-2xl rounded-tl-none p-3.5 text-slate-700 shadow-sm border border-emerald-100 whitespace-pre-line max-w-sm sm:max-w-lg text-sm">${texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+      
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function renderizarIndicadorDigitando() {
+      const id = 'typing-indicator';
+      const div = document.createElement('div');
+      div.id = id;
+      div.className = 'flex items-center gap-2 text-xs text-slate-400 fade-enter';
+      div.innerHTML = `
+        <div class="w-6 h-6 rounded-full bg-white shadow-xs flex items-center justify-center text-xs">💧</div>
+        <span>EkoIA está pensando...</span>
+      `;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return id;
+    }
+
+    function removerIndicadorDigitando(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    async function perguntarRapido(texto) {
+      if (chatInput) chatInput.value = texto;
+      await enviarChat();
+    }
+
+    async function enviarChat(e) {
+      if (e) e.preventDefault();
+      const pergunta = chatInput.value.trim();
+      if (!pergunta) return;
+
+      chatInput.value = '';
+      renderizarBolhaChat(pergunta, true);
+
+      const typingId = renderizarIndicadorDigitando();
+
+      try {
+        const response = await fetch('/api/eko', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pergunta })
+        });
+        
+        removerIndicadorDigitando(typingId);
+
+        if (response.ok) {
+          const dados = await response.json();
+          renderizarBolhaChat(dados.resposta);
+        } else {
+          throw new Error('Falha na resposta');
+        }
+      } catch (err) {
+        removerIndicadorDigitando(typingId);
+        // Fallback inteligente simulando o iaeko.dart
+        let respostaLocal = "Olá! Eu sou o Eko 💧! Estou aqui para auxiliar na rotina do idoso.";
+        const txt = pergunta.toLowerCase();
+        
+        if (txt.includes('joão') || txt.includes('joao') || txt.includes('remédio') || txt.includes('medicamento') || txt.includes('horário') || txt.includes('amoxicilina')) {
+          respostaLocal = `📋 **Paciente João**\n• **Medicamento:** Amoxicilina (A cada 12 horas)\n• **Próximo horário:** 19:30\n• **Dose:** 500mg\n• **Cuidadora responsável:** Iza`;
+        } else if (txt.includes('estoque')) {
+          respostaLocal = `📦 **Estoque Atual:**\n• Amoxicilina: 14 cápsulas\n• Losartana: 30 comprimidos\n• Omeprazol: 28 cápsulas\nTodos dentro do prazo de validade!`;
+        } else if (txt.includes('editar') || txt.includes('paciente') || txt.includes('adicionar')) {
+          respostaLocal = `✏️ Você pode clicar na aba **"Editar Info"** ou **"Adicionar Paciente"** acima para alterar dosagens, horários e vias de administração em tempo real.`;
+        } else if (txt.includes('ilpi') || txt.includes('estatística') || txt.includes('brasil')) {
+          respostaLocal = `📊 Segundo as ILPIs, de **70% a 80%** das casas de repouso no Brasil ainda operam com planilhas e anotações manuais. A Ekobélth digitaliza todo esse processo com inteligência artificial!`;
+        }
+
+        renderizarBolhaChat(respostaLocal);
+      }
+    }
+  </script>
+</body>
+</html>

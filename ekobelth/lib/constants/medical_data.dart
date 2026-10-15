@@ -1,0 +1,45 @@
+const List<String> kMedicamentos = [
+  'Paracetamol',
+  'Ibuprofeno',
+  'Amoxicilina',
+  'Losartana',
+  'Dipirona',
+  'Omeprazol',
+  'Simeticona',
+  'Loratadina',
+  'Azitromicina',
+  'AAS (Ácido Acetilsalicílico)',
+  'Prednisona',
+  'Cefalexina',
+  'Metformina',
+  'Enalapril',
+  'Clonazepam',
+  'Fluoxetina',
+  'Pantoprazol',
+  'Diclofenaco',
+  'Nimesulida',
+  'Cetirizina',
+  'Dexametasona',
+  'Levotiroxina',
+  'Sinvastatina',
+  'Atenolol',
+  'Diazepam',
+];
+
+const List<String> kVias = [
+  'Oral (Comprimido)',
+  'Oral (Gotas)',
+  'Injetável',
+  'Tópico (Pomada)',
+  'Inalação',
+];
+
+const List<String> kFrequencias = [
+  'A cada 4 horas',
+  'A cada 6 horas',
+  'A cada 8 horas',
+  'A cada 12 horas',
+  '1 vez ao dia (24h)',
+  '2 vezes ao dia (24h)',
+  '4 vezes ao dia (24h)',
+];

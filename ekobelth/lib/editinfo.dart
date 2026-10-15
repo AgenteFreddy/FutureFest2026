@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/tratamento.dart';
 import 'services/api_service.dart';
+import 'constants/medical_data.dart';
 
 class EditarInfoScreen extends StatefulWidget {
   const EditarInfoScreen({super.key});
@@ -9,49 +10,9 @@ class EditarInfoScreen extends StatefulWidget {
 }
 
 class _EditarInfoScreenState extends State<EditarInfoScreen> {
-  final List<String> listaRemedios = [
-    'Paracetamol',
-    'Ibuprofeno',
-    'Amoxicilina',
-    'Losartana',
-    'Dipirona',
-    'Omeprazol',
-    'Simeticona',
-    'Loratadina',
-    'Azitromicina',
-    'AAS (Ácido Acetilsalicílico)',
-    'Prednisona',
-    'Cefalexina',
-    'Metformina',
-    'Enalapril',
-    'Clonazepam',
-    'Fluoxetina',
-    'Pantoprazol',
-    'Diclofenaco',
-    'Nimesulida',
-    'Cetirizina',
-    'Dexametasona',
-    'Levotiroxina',
-    'Sinvastatina',
-    'Atenolol',
-    'Diazepam',
-  ];
-  final List<String> listaVias = [
-    'Oral (Comprimido)',
-    'Oral (Gotas)',
-    'Injetável',
-    'Tópico (Pomada)',
-    'Inalação',
-  ];
-  final List<String> listaFrequencia = [
-    'A cada 4 horas',
-    'A cada 6 horas',
-    'A cada 8 horas',
-    'A cada 12 horas',
-    '1 vez ao dia (24h)',
-    '2 vezes ao dia (24h)',
-    '4 vezes ao dia (24h)',
-  ];
+  final List<String> listaRemedios = kMedicamentos;
+  final List<String> listaVias = kVias;
+  final List<String> listaFrequencia = kFrequencias;
   final ApiService apiService = ApiService();
   late Future<List<Tratamento>> futureTratamentos;
   final TextEditingController _searchController = TextEditingController();
@@ -443,14 +404,6 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                           '${tratamento.inicio.isEmpty ? '-' : tratamento.inicio} ➔ ${tratamento.fim.isEmpty ? '-' : tratamento.fim}',
                         ),
                       ],
-                      if (tratamento.estoque.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        _buildInfoRow(
-                          Icons.inventory_2_outlined,
-                          'Estoque',
-                          tratamento.estoque,
-                        ),
-                      ],
                       if (tratamento.obs.isNotEmpty) ...[
                         const SizedBox(height: 6),
                         _buildInfoRow(
@@ -804,12 +757,14 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                   );
                                 }
                                 final todosTratamentos = snapshot.data ?? [];
-                                final tratamentos = todosTratamentos.where((t) {
-                                  if (_searchQuery.trim().isEmpty) return true;
-                                  final q = _searchQuery.toLowerCase().trim();
-                                  return t.paciente.toLowerCase().contains(q) ||
-                                      t.medicamento.toLowerCase().contains(q);
-                                }).toList();
+                                // Normaliza a busca uma vez (antes era por item).
+                                final q = _searchQuery.toLowerCase().trim();
+                                final tratamentos = q.isEmpty
+                                    ? todosTratamentos
+                                    : todosTratamentos.where((t) {
+                                        return t.paciente.toLowerCase().contains(q) ||
+                                            t.medicamento.toLowerCase().contains(q);
+                                      }).toList();
                                 if (todosTratamentos.isEmpty) {
                                   return const Center(
                                     child: Text(
@@ -958,9 +913,6 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
     TextEditingController quantidadeController = TextEditingController(
       text: tratamento.dose,
     );
-    TextEditingController estoqueController = TextEditingController(
-      text: tratamento.estoque,
-    );
     TextEditingController observacoesController = TextEditingController(
       text: tratamento.obs,
     );
@@ -1079,30 +1031,21 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                   isSmallScreen: isDialogMobile,
                                 ),
                                 _buildTextField(
-                                  'Dose (ex: 2 comp.)',
+                                  'Dose',
                                   quantidadeController,
                                   isSmallScreen: isDialogMobile,
                                 ),
                                 isDialogMobile,
                               ),
                               const SizedBox(height: 16),
-                              _buildResponsiveRow(
-                                _buildDropdownField(
-                                  'Frequência',
-                                  frequenciaSelecionada,
-                                  listaFrequencia,
-                                  (val) => setStateDialog(
-                                    () => frequenciaSelecionada = val,
-                                  ),
-                                  isSmallScreen: isDialogMobile,
+                              _buildDropdownField(
+                                'Frequência',
+                                frequenciaSelecionada,
+                                listaFrequencia,
+                                (val) => setStateDialog(
+                                  () => frequenciaSelecionada = val,
                                 ),
-                                _buildTextField(
-                                  'Estoque Total',
-                                  estoqueController,
-                                  keyboardType: TextInputType.number,
-                                  isSmallScreen: isDialogMobile,
-                                ),
-                                isDialogMobile,
+                                isSmallScreen: isDialogMobile,
                               ),
                               const SizedBox(height: 16),
                               _buildResponsiveRow(
@@ -1213,7 +1156,6 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 via: viaSelecionada ?? '',
                                 dose: quantidadeController.text,
                                 frequencia: frequenciaSelecionada ?? '',
-                                estoque: estoqueController.text,
                                 inicio: inicioController.text,
                                 fim: fimController.text,
                                 obs: observacoesController.text,

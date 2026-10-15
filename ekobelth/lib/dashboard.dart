@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'adduser.dart';
 import 'editinfo.dart';
+import 'estoque.dart';
 import 'settings.dart';
 import 'models/tratamento.dart';
 import 'services/api_service.dart';
 import 'providers/theme_provider.dart';
 import 'services/notification_service.dart';
+import 'services/sessao.dart';
 import 'iaeko.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -26,15 +28,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _carregarDados() async {
+    final tratamentos = apiService.getTratamentos();
     setState(() {
-      futureTratamentos = apiService.getTratamentos();
-      futureLembretes = apiService.getLembretes();
+      futureTratamentos = tratamentos;
+      // Lembretes = tratamentos com data de início (mesmo filtro e ordem do
+      // backend em /lembretes). Reaproveita a resposta de /tratamentos e só
+      // consulta /lembretes se essa requisição falhar.
+      futureLembretes = tratamentos
+          .then((lista) => lista.where((t) => t.inicio.isNotEmpty).toList())
+          .catchError((_) => apiService.getLembretes());
     });
-    final tratamentos = await futureTratamentos;
+    final List<Tratamento> lista;
+    try {
+      lista = await tratamentos;
+    } catch (e) {
+      // O erro já é exibido pelo FutureBuilder.
+      debugPrint('Erro ao carregar tratamentos: $e');
+      return;
+    }
     final notificationService = NotificationService();
-    await notificationService.cancelAllNotifications();
-    for (int i = 0; i < tratamentos.length; i++) {
-      final t = tratamentos[i];
+    try {
+      await notificationService.cancelAllNotifications();
+    } catch (e) {
+      debugPrint('Erro ao cancelar notificações: $e');
+    }
+    final agora = DateTime.now();
+    final agendamentos = <Future<void>>[];
+    for (int i = 0; i < lista.length; i++) {
+      final t = lista[i];
       try {
         final partes = t.inicio.split(' ');
         if (partes.length == 2) {
@@ -47,12 +68,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             int.parse(horaPartes[0]),
             int.parse(horaPartes[1]),
           );
-          if (scheduledDate.isAfter(DateTime.now())) {
-            await notificationService.scheduleNotification(
-              id: i,
-              title: 'Hora do Medicamento: ${t.medicamento}',
-              body: 'Paciente: ${t.paciente} - Dose: ${t.dose}',
-              scheduledDate: scheduledDate,
+          if (scheduledDate.isAfter(agora)) {
+            agendamentos.add(
+              notificationService
+                  .scheduleNotification(
+                    id: i,
+                    title: 'Hora do Medicamento: ${t.medicamento}',
+                    body: 'Paciente: ${t.paciente} - Dose: ${t.dose}',
+                    scheduledDate: scheduledDate,
+                  )
+                  .catchError((Object e) {
+                    debugPrint('Erro ao agendar notificação: $e');
+                  }),
             );
           }
         }
@@ -60,6 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         debugPrint('Erro ao agendar notificação: $e');
       }
     }
+    await Future.wait(agendamentos);
   }
 
   Future<void> _atualizarDashboard() async {
@@ -148,36 +176,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             children: [
                               Expanded(
                                 flex: 5,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildWelcomeSection(textColor),
-                                    const SizedBox(height: 32),
-                                    Expanded(
-                                      child: _buildListaMedicamentos(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildWelcomeSection(textColor),
+                                      const SizedBox(height: 32),
+                                      _buildListaMedicamentos(
                                         cardColor,
                                         textColor,
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 24),
                               Expanded(
                                 flex: 4,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildIaEkoBadge(context),
-                                    const SizedBox(height: 16),
-                                    _buildActionMenu(
-                                      context,
-                                      cardColor,
-                                      textColor,
-                                    ),
-                                    const SizedBox(height: 32),
-                                    _buildLembretesCustom(cardColor, textColor),
-                                  ],
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildIaEkoBadge(context),
+                                      const SizedBox(height: 16),
+                                      _buildActionMenu(
+                                        context,
+                                        cardColor,
+                                        textColor,
+                                      ),
+                                      const SizedBox(height: 32),
+                                      _buildLembretesCustom(
+                                        cardColor,
+                                        textColor,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -268,11 +303,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _abrirCalendarioLembretes() async {
     try {
-      final tratamentos = await apiService.getLembretes();
+      List<Tratamento> tratamentos;
+      try {
+        // Reaproveita os lembretes já carregados pelo dashboard (abre na hora).
+        tratamentos = await futureLembretes;
+      } catch (_) {
+        // Se o carregamento do dashboard falhou, busca direto no servidor.
+        tratamentos = await apiService.getLembretes();
+      }
       if (!mounted) return;
       final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
       final isDark = themeProvider.isDarkMode;
       final Color cardColor = isDark ? Colors.grey[850]! : Colors.white;
+      final screenHeight = MediaQuery.of(context).size.height;
+      final dialogHeight = (screenHeight * 0.8).clamp(0.0, 520.0);
       showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -282,10 +326,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: cardColor,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              height: 470,
-              width: 350,
-              child: _CalendarioLembretes(tratamentos: tratamentos),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 350),
+              child: SizedBox(
+                height: dialogHeight,
+                child: _CalendarioLembretes(tratamentos: tratamentos),
+              ),
             ),
           ),
         ),
@@ -329,12 +375,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             const SizedBox(width: 10),
-            const Text(
-              'IA Eko',
-              style: TextStyle(
-                color: Color(0xFF4A9FD1),
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
+            const Flexible(
+              child: Text(
+                'EkoIA',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Color(0xFF4A9FD1),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
               ),
             ),
           ],
@@ -344,46 +394,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildWelcomeSection(Color textColor) {
-    return Row(
-      children: [
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            border: Border.all(color: Colors.white, width: 4),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/cuidadora.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.person, color: Colors.grey),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        RichText(
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: 32,
-              color: textColor,
-              fontWeight: FontWeight.w500,
-            ),
-            children: const [
-              TextSpan(text: 'Bem-vinda, '),
-              TextSpan(
-                text: 'Iza',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final estreito = constraints.maxWidth < 400;
+        final double avatar = estreito ? 56 : 80;
+        return Row(
+          children: [
+            Container(
+              width: avatar,
+              height: avatar,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(color: Colors.white, width: 4),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/cuidadora.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.person, color: Colors.grey),
                 ),
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+            SizedBox(width: estreito ? 12 : 16),
+            Expanded(
+              child: RichText(
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  style: TextStyle(
+                    fontSize: estreito ? 24 : 32,
+                    color: textColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Bem-vinda, '),
+                    TextSpan(
+                      text: Sessao.usuarioAtual?.primeiroNome ?? 'Cuidadora',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -523,6 +583,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
             textColor: textColor,
           ),
         ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: actionItem(
+            Icons.assignment,
+            'Estoque',
+            Colors.green,
+            () async {
+              final alterou = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EstoqueScreen()),
+              );
+              if (alterou == true) {
+                _atualizarDashboard();
+              }
+            },
+            textColor: textColor,
+          ),
+        ),
       ],
     );
   }
@@ -557,6 +641,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -564,11 +650,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               Text(
                 medicamento,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
         ),
+        const SizedBox(width: 8),
         Text(
           time,
           style: const TextStyle(
@@ -591,7 +680,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       color: Colors.transparent,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.1),
+          backgroundColor: color.withValues(alpha: 0.1),
           child: Icon(icon, color: color),
         ),
         title: Text(
@@ -615,16 +704,45 @@ class _CalendarioLembretes extends StatefulWidget {
 class _CalendarioLembretesState extends State<_CalendarioLembretes> {
   late DateTime mesAtual;
   late DateTime diaSelecionado;
+
+  /// Compilado uma única vez (antes era recriado para cada célula).
+  static final RegExp _regexData = RegExp(r'^(\d{2})/(\d{2})/(\d{4})');
+
+  /// Intervalos (início/fim em formato yyyymmdd) já interpretados,
+  /// na mesma ordem de [widget.tratamentos]. null = data inválida.
+  late List<(int, int)?> _intervalos;
+
   @override
   void initState() {
     super.initState();
     final hoje = DateTime.now();
     mesAtual = DateTime(hoje.year, hoje.month);
     diaSelecionado = DateTime(hoje.year, hoje.month, hoje.day);
+    _intervalos = _calcularIntervalos();
   }
 
+  @override
+  void didUpdateWidget(covariant _CalendarioLembretes oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.tratamentos, widget.tratamentos)) {
+      _intervalos = _calcularIntervalos();
+    }
+  }
+
+  List<(int, int)?> _calcularIntervalos() {
+    return widget.tratamentos.map<(int, int)?>((tratamento) {
+      final inicio = _parseData(tratamento.inicio);
+      if (inicio == null) return null;
+      final fim = _parseData(tratamento.fim) ?? inicio;
+      return (_chave(inicio), _chave(fim));
+    }).toList(growable: false);
+  }
+
+  /// Converte uma data em um inteiro comparável (yyyymmdd).
+  static int _chave(DateTime d) => d.year * 10000 + d.month * 100 + d.day;
+
   DateTime? _parseData(String valor) {
-    final partes = RegExp(r'^(\d{2})/(\d{2})/(\d{4})').firstMatch(valor);
+    final partes = _regexData.firstMatch(valor);
     if (partes == null) return null;
     return DateTime(
       int.parse(partes.group(3)!),
@@ -637,16 +755,26 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
+  bool _temLembrete(DateTime dia) {
+    final chave = _chave(dia);
+    for (final intervalo in _intervalos) {
+      if (intervalo != null && chave >= intervalo.$1 && chave <= intervalo.$2) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   List<Tratamento> _tratamentosDoDia(DateTime dia) {
-    return widget.tratamentos.where((tratamento) {
-      final inicio = _parseData(tratamento.inicio);
-      if (inicio == null) return false;
-      final fim = _parseData(tratamento.fim) ?? inicio;
-      final dataInicio = DateTime(inicio.year, inicio.month, inicio.day);
-      final dataFim = DateTime(fim.year, fim.month, fim.day);
-      final dataDia = DateTime(dia.year, dia.month, dia.day);
-      return !dataDia.isBefore(dataInicio) && !dataDia.isAfter(dataFim);
-    }).toList();
+    final chave = _chave(dia);
+    final resultado = <Tratamento>[];
+    for (int i = 0; i < _intervalos.length; i++) {
+      final intervalo = _intervalos[i];
+      if (intervalo != null && chave >= intervalo.$1 && chave <= intervalo.$2) {
+        resultado.add(widget.tratamentos[i]);
+      }
+    }
+    return resultado;
   }
 
   void _mudarMes(int quantidade) {
@@ -690,12 +818,18 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
               onPressed: () => _mudarMes(-1),
               icon: Icon(Icons.chevron_left, color: textColor),
             ),
-            Text(
-              '${nomesMeses[mesAtual.month - 1]} ${mesAtual.year}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '${nomesMeses[mesAtual.month - 1]} ${mesAtual.year}',
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
               ),
             ),
             IconButton(
@@ -728,6 +862,7 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
             itemCount: espacosAntes + totalDiasMes,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
+              childAspectRatio: 1.05,
             ),
             itemBuilder: (context, index) {
               if (index < espacosAntes) return const SizedBox.shrink();
@@ -736,36 +871,54 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                 mesAtual.month,
                 index - espacosAntes + 1,
               );
-              final temLembrete = _tratamentosDoDia(dia).isNotEmpty;
+              final temLembrete = _temLembrete(dia);
               final selecionado = _mesmoDia(dia, diaSelecionado);
               return InkWell(
                 borderRadius: BorderRadius.circular(24),
                 onTap: () => setState(() => diaSelecionado = dia),
                 child: Container(
-                  margin: const EdgeInsets.all(3),
+                  margin: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    color: selecionado ? Colors.green.withOpacity(0.2) : null,
+                    color: selecionado
+                        ? Colors.green.withValues(alpha: 0.2)
+                        : null,
                     borderRadius: BorderRadius.circular(24),
                     border: selecionado
-                        ? Border.all(color: Colors.green, width: 2)
+                        ? Border.all(color: Colors.green, width: 1.5)
                         : null,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('${dia.day}', style: TextStyle(color: textColor)),
-                      const SizedBox(height: 3),
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: temLembrete
-                              ? Colors.green
-                              : Colors.transparent,
-                          shape: BoxShape.circle,
-                        ),
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${dia.day}',
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 13,
+                              height: 1.1,
+                              fontWeight: selecionado
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Container(
+                            width: 5,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: temLembrete
+                                  ? Colors.green
+                                  : Colors.transparent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               );
@@ -800,7 +953,7 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                       ),
                       subtitle: Text(
                         '${tratamento.dose}\n${tratamento.via} • ${tratamento.frequencia}',
-                        style: TextStyle(color: textColor.withOpacity(0.7)),
+                        style: TextStyle(color: textColor.withValues(alpha: 0.7)),
                       ),
                       trailing: Text(
                         horario,

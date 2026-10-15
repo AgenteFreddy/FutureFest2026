@@ -5,7 +5,6 @@ class Tratamento {
   final String via;
   final String dose;
   final String frequencia;
-  final String estoque;
   final String inicio;
   final String fim;
   final String obs;
@@ -16,7 +15,6 @@ class Tratamento {
     required this.via,
     required this.dose,
     required this.frequencia,
-    required this.estoque,
     required this.inicio,
     required this.fim,
     required this.obs,
@@ -29,7 +27,6 @@ class Tratamento {
       via: json['via'] ?? '',
       dose: json['dose'] ?? '',
       frequencia: json['frequencia'] ?? '',
-      estoque: json['estoque'] ?? '',
       inicio: json['inicio'] ?? '',
       fim: json['fim'] ?? '',
       obs: json['obs'] ?? '',
@@ -43,7 +40,6 @@ class Tratamento {
       'via': via,
       'dose': dose,
       'frequencia': frequencia,
-      'estoque': estoque,
       'inicio': inicio,
       'fim': fim,
       'obs': obs,
@@ -57,7 +53,6 @@ class Tratamento {
       'via': via,
       'dose': dose,
       'frequencia': frequencia,
-      'estoque': estoque,
       'inicio': inicio,
       'fim': fim,
       'obs': obs,
