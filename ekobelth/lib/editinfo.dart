@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+
+import 'constants/medical_data.dart';
 import 'models/tratamento.dart';
 import 'services/api_service.dart';
-import 'constants/medical_data.dart';
 
 class EditarInfoScreen extends StatefulWidget {
   const EditarInfoScreen({super.key});
+
   @override
   State<EditarInfoScreen> createState() => _EditarInfoScreenState();
 }
@@ -147,14 +149,14 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [child1, const SizedBox(height: 16), child2],
+        children: [child1, SizedBox(height: 16), child2],
       );
     } else {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: child1),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           Expanded(child: child2),
         ],
       );
@@ -166,7 +168,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 16, color: const Color(0xFF0056B3)),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           '$label: ',
           style: const TextStyle(
@@ -230,7 +232,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
     return ListView.separated(
       padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
       itemCount: tratamentos.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) => SizedBox(height: 12),
       itemBuilder: (context, index) {
         final tratamento = tratamentos[index];
         return Card(
@@ -258,7 +260,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                       radius: 18,
                       child: Icon(Icons.person, size: 20),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         tratamento.paciente,
@@ -286,7 +288,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                       ),
                       tooltip: 'Editar Tratamento',
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     IconButton.filledTonal(
                       icon: const Icon(Icons.delete_outline, size: 18),
                       style: IconButton.styleFrom(
@@ -300,7 +302,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 6,
@@ -323,7 +325,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                             size: 15,
                             color: Color(0xFF0056B3),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6),
                           Text(
                             tratamento.medicamento,
                             style: const TextStyle(
@@ -354,7 +356,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                               size: 15,
                               color: Color(0xFF2E7D32),
                             ),
-                            const SizedBox(width: 6),
+                            SizedBox(width: 6),
                             Text(
                               tratamento.dose,
                               style: const TextStyle(
@@ -368,7 +370,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                       ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -388,7 +390,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                         ),
                       if (tratamento.via.isNotEmpty &&
                           tratamento.frequencia.isNotEmpty)
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                       if (tratamento.frequencia.isNotEmpty)
                         _buildInfoRow(
                           Icons.access_time_rounded,
@@ -397,7 +399,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                         ),
                       if (tratamento.inicio.isNotEmpty ||
                           tratamento.fim.isNotEmpty) ...[
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         _buildInfoRow(
                           Icons.calendar_today_rounded,
                           'Período',
@@ -405,7 +407,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                         ),
                       ],
                       if (tratamento.obs.isNotEmpty) ...[
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         _buildInfoRow(
                           Icons.notes_rounded,
                           'Observações',
@@ -576,7 +578,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                   tooltip: 'Recarregar',
                   onPressed: _recarregarTratamentos,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
               ],
             ),
             body: SafeArea(
@@ -654,7 +656,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -729,7 +731,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                             color: Colors.redAccent,
                                             size: 40,
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           Text(
                                             'Erro ao carregar tratamentos:\n${snapshot.error}',
                                             textAlign: TextAlign.center,
@@ -737,7 +739,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                               color: Colors.redAccent,
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           ElevatedButton.icon(
                                             onPressed: _recarregarTratamentos,
                                             icon: const Icon(Icons.refresh),
@@ -757,13 +759,16 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                   );
                                 }
                                 final todosTratamentos = snapshot.data ?? [];
-                                // Normaliza a busca uma vez (antes era por item).
                                 final q = _searchQuery.toLowerCase().trim();
                                 final tratamentos = q.isEmpty
                                     ? todosTratamentos
                                     : todosTratamentos.where((t) {
-                                        return t.paciente.toLowerCase().contains(q) ||
-                                            t.medicamento.toLowerCase().contains(q);
+                                        return t.paciente
+                                                .toLowerCase()
+                                                .contains(q) ||
+                                            t.medicamento
+                                                .toLowerCase()
+                                                .contains(q);
                                       }).toList();
                                 if (todosTratamentos.isEmpty) {
                                   return const Center(
@@ -788,7 +793,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                             size: 48,
                                             color: Colors.grey.shade400,
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           Text(
                                             'Nenhum tratamento encontrado para "$_searchQuery".',
                                             textAlign: TextAlign.center,
@@ -977,7 +982,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                               size: 24,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               'Editar Tratamento',
@@ -996,9 +1001,9 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       const Divider(height: 1),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Flexible(
                         child: SingleChildScrollView(
                           child: Column(
@@ -1009,7 +1014,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 nomeController,
                                 isSmallScreen: isDialogMobile,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildDropdownField(
                                 'Selecione o Medicamento',
                                 remedioSelecionado,
@@ -1019,7 +1024,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 ),
                                 isSmallScreen: isDialogMobile,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildResponsiveRow(
                                 _buildDropdownField(
                                   'Via',
@@ -1037,7 +1042,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 ),
                                 isDialogMobile,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildDropdownField(
                                 'Frequência',
                                 frequenciaSelecionada,
@@ -1047,7 +1052,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 ),
                                 isSmallScreen: isDialogMobile,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildResponsiveRow(
                                 _buildDatePickerField(
                                   'Data/Hora de Início',
@@ -1065,7 +1070,7 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                                 ),
                                 isDialogMobile,
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildTextField(
                                 'Observações médicas',
                                 observacoesController,
@@ -1076,9 +1081,9 @@ class _EditarInfoScreenState extends State<EditarInfoScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       const Divider(height: 1),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Wrap(
                         alignment: WrapAlignment.end,
                         crossAxisAlignment: WrapCrossAlignment.center,

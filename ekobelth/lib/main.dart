@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'componentes.dart';
 import 'dashboard.dart';
 import 'providers/theme_provider.dart';
@@ -10,7 +12,6 @@ import 'services/sessao.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inicializa as notificações em segundo plano, sem atrasar a abertura do app.
   unawaited(NotificationService().init());
   runApp(
     ChangeNotifierProvider(
@@ -22,6 +23,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -69,19 +71,17 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final usuario = await _apiService.login(email, senha);
       Sessao.entrar(usuario);
-      
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const DashboardScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildLogoSection(0, size, isWide),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
             _buildFormSection(context, size, isWide),
           ],
         ),
@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: logoSize,
             fit: BoxFit.contain,
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 5),
           Text(
             'Ekobelth',
             style: TextStyle(
@@ -245,7 +245,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: EdgeInsets.only(right: isWide ? size.width * 0.03 : 0),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: isWide ? size.width * 0.47 : size.width * 0.85),
+        constraints: BoxConstraints(
+          maxWidth: isWide ? size.width * 0.47 : size.width * 0.85,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -256,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TransparentTextField(
               hint: 'Senha:',
               isPassword: true,

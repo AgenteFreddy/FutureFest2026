@@ -1,8 +1,5 @@
 import '../models/usuario.dart';
 
-/// Guarda o usuário logado enquanto o app está aberto.
-/// O [usuarioId] é enviado em todas as requisições para carregar
-/// apenas os idosos (tratamentos) e o estoque desse usuário.
 class Sessao {
   Sessao._();
 

@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class TransparentTextField extends StatelessWidget {
@@ -8,6 +9,7 @@ class TransparentTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
+
   const TransparentTextField({
     super.key,
     required this.hint,
@@ -17,6 +19,7 @@ class TransparentTextField extends StatelessWidget {
     this.textInputAction,
     this.onSubmitted,
   });
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -59,12 +62,14 @@ class TransparentButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+
   const TransparentButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
   });
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -88,7 +93,7 @@ class TransparentButton extends StatelessWidget {
               ),
             ),
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2.5),

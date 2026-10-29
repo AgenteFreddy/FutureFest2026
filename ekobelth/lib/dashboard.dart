@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'adduser.dart';
 import 'editinfo.dart';
 import 'estoque.dart';
@@ -13,6 +14,7 @@ import 'iaeko.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
@@ -31,9 +33,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final tratamentos = apiService.getTratamentos();
     setState(() {
       futureTratamentos = tratamentos;
-      // Lembretes = tratamentos com data de início (mesmo filtro e ordem do
-      // backend em /lembretes). Reaproveita a resposta de /tratamentos e só
-      // consulta /lembretes se essa requisição falhar.
       futureLembretes = tratamentos
           .then((lista) => lista.where((t) => t.inicio.isNotEmpty).toList())
           .catchError((_) => apiService.getLembretes());
@@ -42,7 +41,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       lista = await tratamentos;
     } catch (e) {
-      // O erro já é exibido pelo FutureBuilder.
       debugPrint('Erro ao carregar tratamentos: $e');
       return;
     }
@@ -115,8 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Image.asset(
                   'assets/canto2ekobelth.png',
                   width: 500,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) => SizedBox(),
                 ),
               ),
             ),
@@ -127,8 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Image.asset(
                   'assets/cantoekobelth.png',
                   width: 500,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) => SizedBox(),
                 ),
               ),
             ),
@@ -139,8 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Image.asset(
                   'assets/folhaekobelth.png',
                   width: 110,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) => SizedBox(),
                 ),
               ),
             ),
@@ -151,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 children: [
                   _buildTopBar(context, cardColor),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   Expanded(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
@@ -160,13 +155,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           return ListView(
                             children: [
                               _buildWelcomeSection(textColor),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24),
                               _buildIaEkoBadge(context),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
                               _buildActionMenu(context, cardColor, textColor),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24),
                               _buildListaMedicamentos(cardColor, textColor),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24),
                               _buildLembretesCustom(cardColor, textColor),
                             ],
                           );
@@ -182,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       _buildWelcomeSection(textColor),
-                                      const SizedBox(height: 32),
+                                      SizedBox(height: 32),
                                       _buildListaMedicamentos(
                                         cardColor,
                                         textColor,
@@ -191,7 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 24),
+                              SizedBox(width: 24),
                               Expanded(
                                 flex: 4,
                                 child: SingleChildScrollView(
@@ -200,13 +195,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       _buildIaEkoBadge(context),
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: 16),
                                       _buildActionMenu(
                                         context,
                                         cardColor,
                                         textColor,
                                       ),
-                                      const SizedBox(height: 32),
+                                      SizedBox(height: 32),
                                       _buildLembretesCustom(
                                         cardColor,
                                         textColor,
@@ -267,7 +262,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 color: Colors.blue[800],
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             const Text(
                               "As notificações automáticas estão ativas para seus medicamentos.",
                               style: TextStyle(fontSize: 14),
@@ -305,10 +300,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       List<Tratamento> tratamentos;
       try {
-        // Reaproveita os lembretes já carregados pelo dashboard (abre na hora).
         tratamentos = await futureLembretes;
       } catch (_) {
-        // Se o carregamento do dashboard falhou, busca direto no servidor.
         tratamentos = await apiService.getLembretes();
       }
       if (!mounted) return;
@@ -374,7 +367,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 size: 20,
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             const Flexible(
               child: Text(
                 'EkoIA',
@@ -471,7 +464,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           FutureBuilder<List<Tratamento>>(
             future: future,
             builder: (context, snapshot) {
@@ -557,7 +550,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             textColor: textColor,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -583,7 +576,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             textColor: textColor,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -634,7 +627,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundImage: AssetImage(imagePath),
           backgroundColor: Colors.transparent,
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -657,7 +650,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           time,
           style: const TextStyle(
@@ -705,11 +698,8 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
   late DateTime mesAtual;
   late DateTime diaSelecionado;
 
-  /// Compilado uma única vez (antes era recriado para cada célula).
   static final RegExp _regexData = RegExp(r'^(\d{2})/(\d{2})/(\d{4})');
 
-  /// Intervalos (início/fim em formato yyyymmdd) já interpretados,
-  /// na mesma ordem de [widget.tratamentos]. null = data inválida.
   late List<(int, int)?> _intervalos;
 
   @override
@@ -730,15 +720,16 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
   }
 
   List<(int, int)?> _calcularIntervalos() {
-    return widget.tratamentos.map<(int, int)?>((tratamento) {
-      final inicio = _parseData(tratamento.inicio);
-      if (inicio == null) return null;
-      final fim = _parseData(tratamento.fim) ?? inicio;
-      return (_chave(inicio), _chave(fim));
-    }).toList(growable: false);
+    return widget.tratamentos
+        .map<(int, int)?>((tratamento) {
+          final inicio = _parseData(tratamento.inicio);
+          if (inicio == null) return null;
+          final fim = _parseData(tratamento.fim) ?? inicio;
+          return (_chave(inicio), _chave(fim));
+        })
+        .toList(growable: false);
   }
 
-  /// Converte uma data em um inteiro comparável (yyyymmdd).
   static int _chave(DateTime d) => d.year * 10000 + d.month * 100 + d.day;
 
   DateTime? _parseData(String valor) {
@@ -855,7 +846,7 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
               )
               .toList(),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Expanded(
           flex: 2,
           child: GridView.builder(
@@ -865,7 +856,7 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
               childAspectRatio: 1.05,
             ),
             itemBuilder: (context, index) {
-              if (index < espacosAntes) return const SizedBox.shrink();
+              if (index < espacosAntes) return SizedBox.shrink();
               final dia = DateTime(
                 mesAtual.year,
                 mesAtual.month,
@@ -905,7 +896,7 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                                   : FontWeight.normal,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           Container(
                             width: 5,
                             height: 5,
@@ -953,7 +944,9 @@ class _CalendarioLembretesState extends State<_CalendarioLembretes> {
                       ),
                       subtitle: Text(
                         '${tratamento.dose}\n${tratamento.via} • ${tratamento.frequencia}',
-                        style: TextStyle(color: textColor.withValues(alpha: 0.7)),
+                        style: TextStyle(
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
                       ),
                       trailing: Text(
                         horario,

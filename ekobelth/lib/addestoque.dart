@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'models/remedio_estoque.dart';
-import 'services/api_service.dart';
-import 'constants/medical_data.dart';
 import 'package:provider/provider.dart';
+
+import 'constants/medical_data.dart';
+import 'models/remedio_estoque.dart';
 import 'providers/theme_provider.dart';
+import 'services/api_service.dart';
 
 class AddEstoqueScreen extends StatefulWidget {
   const AddEstoqueScreen({super.key});
@@ -16,10 +17,10 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
   final TextEditingController quantidadeController = TextEditingController();
   final TextEditingController validadeController = TextEditingController();
   final TextEditingController observacoesController = TextEditingController();
-  
+
   final List<String> listaRemedios = kMedicamentos;
   String? remedioSelecionado;
-  
+
   final List<String> listaVias = kVias;
   String? viaSelecionada;
 
@@ -28,7 +29,9 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
   InputDecoration _customDecoration(String label, bool isDark) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: isDark ? Colors.blue[300] : const Color(0xFF0056B3)),
+      labelStyle: TextStyle(
+        color: isDark ? Colors.blue[300] : const Color(0xFF0056B3),
+      ),
       filled: true,
       fillColor: isDark ? Colors.grey[800] : const Color(0xFFF5FAFF),
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
@@ -38,7 +41,10 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: isDark ? Colors.grey[700]! : const Color(0xFF81D4FA), width: 1.5),
+        borderSide: BorderSide(
+          color: isDark ? Colors.grey[700]! : const Color(0xFF81D4FA),
+          width: 1.5,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
@@ -87,7 +93,11 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
     );
   }
 
-  Widget _buildDatePickerField(String label, TextEditingController controller, bool isDark) {
+  Widget _buildDatePickerField(
+    String label,
+    TextEditingController controller,
+    bool isDark,
+  ) {
     return InkWell(
       onTap: () async {
         DateTime? dataEscolhida = await showDatePicker(
@@ -98,7 +108,7 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(
-                colorScheme: isDark 
+                colorScheme: isDark
                     ? const ColorScheme.dark(
                         primary: Color(0xFF4CAF50),
                         onPrimary: Colors.white,
@@ -148,14 +158,14 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [child1, const SizedBox(height: 16), child2],
+        children: [child1, SizedBox(height: 16), child2],
       );
     } else {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: child1),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           Expanded(child: child2),
         ],
       );
@@ -171,7 +181,9 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          content: const Text('Preencha pelo menos o medicamento e a quantidade.'),
+          content: const Text(
+            'Preencha pelo menos o medicamento e a quantidade.',
+          ),
         ),
       );
       return;
@@ -226,7 +238,9 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
-    final backgroundColor = isDark ? Colors.grey[900]! : const Color(0xFFEAF5E1);
+    final backgroundColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFFEAF5E1);
     final cardColor = isDark ? Colors.grey[850]! : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0056B3);
 
@@ -242,10 +256,15 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
               color: cardColor,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 4,
+                ),
               ],
             ),
-            child: BackButton(color: isDark ? Colors.white : const Color(0xFF0056B3)),
+            child: BackButton(
+              color: isDark ? Colors.white : const Color(0xFF0056B3),
+            ),
           ),
         ),
         title: Text(
@@ -271,7 +290,9 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
+                          color: const Color(
+                            0xFF4CAF50,
+                          ).withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 5,
                           offset: const Offset(0, 10),
@@ -291,7 +312,7 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32),
                         _buildDropdownField(
                           'Selecione o Medicamento',
                           remedioSelecionado,
@@ -299,7 +320,7 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
                           (val) => setState(() => remedioSelecionado = val),
                           isDark,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildResponsiveRow(
                           _buildDropdownField(
                             'Via de Administração',
@@ -316,20 +337,20 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
                           ),
                           isMobile,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildDatePickerField(
                           'Data de Validade',
                           validadeController,
                           isDark,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildTextField(
                           'Observações (Opcional)',
                           observacoesController,
                           isDark,
                           maxLines: 3,
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4CAF50),
@@ -338,11 +359,13 @@ class _AddEstoqueScreenState extends State<AddEstoqueScreen> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             elevation: 4,
-                            shadowColor: const Color(0xFF4CAF50).withValues(alpha: 0.5),
+                            shadowColor: const Color(
+                              0xFF4CAF50,
+                            ).withValues(alpha: 0.5),
                           ),
                           onPressed: _isLoading ? null : _salvarEstoque,
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   height: 24,
                                   width: 24,
                                   child: CircularProgressIndicator(

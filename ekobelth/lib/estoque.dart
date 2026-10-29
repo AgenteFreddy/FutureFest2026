@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'addestoque.dart';
+import 'models/remedio_estoque.dart';
 import 'providers/theme_provider.dart';
 import 'services/api_service.dart';
-import 'models/remedio_estoque.dart';
-import 'addestoque.dart';
 
 class EstoqueScreen extends StatefulWidget {
   const EstoqueScreen({super.key});
@@ -43,7 +44,9 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Confirmar exclusão'),
-          content: Text('Tem certeza que deseja excluir ${item.medicamento} do estoque?'),
+          content: Text(
+            'Tem certeza que deseja excluir ${item.medicamento} do estoque?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -53,14 +56,18 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
               onPressed: () async {
                 Navigator.pop(dialogContext);
                 if (item.id != null) {
-                  final sucesso = await apiService.deleteRemedioEstoque(item.id!);
+                  final sucesso = await apiService.deleteRemedioEstoque(
+                    item.id!,
+                  );
                   if (sucesso) {
                     _houveMudanca = true;
                     _recarregarEstoque();
                   } else {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Erro ao deletar do servidor.')),
+                        const SnackBar(
+                          content: Text('Erro ao deletar do servidor.'),
+                        ),
                       );
                     }
                   }
@@ -78,7 +85,9 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
-    final backgroundColor = isDark ? Colors.grey[900]! : const Color(0xFFFBF8EF);
+    final backgroundColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFFFBF8EF);
     final cardColor = isDark ? Colors.grey[850]! : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black87;
 
@@ -100,15 +109,23 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                 color: cardColor,
                 shape: BoxShape.circle,
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                  ),
                 ],
               ),
-              child: BackButton(color: isDark ? Colors.white : const Color(0xFF0056B3)),
+              child: BackButton(
+                color: isDark ? Colors.white : const Color(0xFF0056B3),
+              ),
             ),
           ),
           title: Text(
             'Estoque de Remédios',
-            style: TextStyle(color: isDark ? Colors.white : const Color(0xFF0050A0), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF0050A0),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           actions: [
             Padding(
@@ -117,7 +134,9 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                 onPressed: () async {
                   final alterou = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AddEstoqueScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const AddEstoqueScreen(),
+                    ),
                   );
                   if (alterou == true) {
                     _houveMudanca = true;
@@ -127,7 +146,10 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                 icon: const Icon(Icons.add, color: Colors.white, size: 20),
                 label: const Text(
                   'Adicionar',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4CAF50),
@@ -148,7 +170,10 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16.0 : 32.0, vertical: 16.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 16.0 : 32.0,
+                    vertical: 16.0,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -169,36 +194,54 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                             style: TextStyle(color: textColor),
                             decoration: InputDecoration(
                               hintText: 'Pesquisar medicamento...',
-                              hintStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
-                              prefixIcon: Icon(Icons.search, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                              hintStyle: TextStyle(
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: isDark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                              ),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 16,
+                              ),
                             ),
                             onChanged: (value) {
-                              // We could update _searchQuery and setState here if _searchQuery is not final.
-                              // Wait, I made it final above in a previous fix attempt.
-                              // Let's ignore _searchQuery and use _searchController.text
                               setState(() {});
                             },
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Container(
                         decoration: BoxDecoration(
                           color: cardColor,
                           shape: BoxShape.circle,
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 4,
+                            ),
                           ],
                         ),
                         child: IconButton(
                           icon: Icon(
-                            useTableView ? Icons.view_agenda_outlined : Icons.table_chart_outlined,
-                            color: isDark ? Colors.white : const Color(0xFF0056B3),
+                            useTableView
+                                ? Icons.view_agenda_outlined
+                                : Icons.table_chart_outlined,
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF0056B3),
                             size: 24,
                           ),
-                          tooltip: useTableView ? 'Mudar para visualização em Cards' : 'Mudar para visualização em Tabela',
+                          tooltip: useTableView
+                              ? 'Mudar para visualização em Cards'
+                              : 'Mudar para visualização em Tabela',
                           onPressed: () {
                             setState(() {
                               _preferTableView = !useTableView;
@@ -219,7 +262,10 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                         return Center(
                           child: Text(
                             'Erro ao carregar o estoque.\n${snapshot.error}',
-                            style: const TextStyle(color: Colors.redAccent, fontSize: 16),
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 16,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         );
@@ -232,12 +278,13 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                         );
                       }
 
-                      // Normaliza a busca uma vez (antes era por item).
                       final busca = _searchController.text.toLowerCase();
                       final estoqueTotal = busca.isEmpty
                           ? snapshot.data!
                           : snapshot.data!.where((item) {
-                              return item.medicamento.toLowerCase().contains(busca);
+                              return item.medicamento.toLowerCase().contains(
+                                busca,
+                              );
                             }).toList();
 
                       if (estoqueTotal.isEmpty) {
@@ -249,9 +296,21 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                         );
                       }
 
-                      return useTableView 
-                          ? _buildTableView(estoqueTotal, isDark, cardColor, textColor, isSmallScreen)
-                          : _buildCardListView(estoqueTotal, isDark, cardColor, textColor, isSmallScreen);
+                      return useTableView
+                          ? _buildTableView(
+                              estoqueTotal,
+                              isDark,
+                              cardColor,
+                              textColor,
+                              isSmallScreen,
+                            )
+                          : _buildCardListView(
+                              estoqueTotal,
+                              isDark,
+                              cardColor,
+                              textColor,
+                              isSmallScreen,
+                            );
                     },
                   ),
                 ),
@@ -263,13 +322,22 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
     );
   }
 
-  Widget _buildTableView(List<RemedioEstoque> estoqueTotal, bool isDark, Color cardColor, Color textColor, bool isSmallScreen) {
+  Widget _buildTableView(
+    List<RemedioEstoque> estoqueTotal,
+    bool isDark,
+    Color cardColor,
+    Color textColor,
+    bool isSmallScreen,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16.0 : 32.0, vertical: 16.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 16.0 : 32.0,
+            vertical: 16.0,
+          ),
           child: Container(
             decoration: BoxDecoration(
               color: cardColor,
@@ -292,10 +360,7 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                 color: isDark ? Colors.white : const Color(0xFF0056B3),
                 fontSize: 15,
               ),
-              dataTextStyle: TextStyle(
-                color: textColor,
-                fontSize: 14,
-              ),
+              dataTextStyle: TextStyle(color: textColor, fontSize: 14),
               columns: const [
                 DataColumn(label: Text('Medicamento')),
                 DataColumn(label: Text('Quantidade')),
@@ -306,25 +371,45 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
               rows: estoqueTotal.map((item) {
                 return DataRow(
                   cells: [
-                    DataCell(Text(item.medicamento, style: const TextStyle(fontWeight: FontWeight.w600))),
+                    DataCell(
+                      Text(
+                        item.medicamento,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
                     DataCell(
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           item.quantidade,
-                          style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                    DataCell(Text(item.dataValidade.isNotEmpty ? item.dataValidade : 'N/A')),
+                    DataCell(
+                      Text(
+                        item.dataValidade.isNotEmpty
+                            ? item.dataValidade
+                            : 'N/A',
+                      ),
+                    ),
                     DataCell(Text(item.via.isNotEmpty ? item.via : 'N/A')),
                     DataCell(
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
                         onPressed: () => _confirmarDelecao(item),
                         tooltip: 'Deletar',
                       ),
@@ -339,11 +424,20 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
     );
   }
 
-  Widget _buildCardListView(List<RemedioEstoque> estoqueTotal, bool isDark, Color cardColor, Color textColor, bool isSmallScreen) {
+  Widget _buildCardListView(
+    List<RemedioEstoque> estoqueTotal,
+    bool isDark,
+    Color cardColor,
+    Color textColor,
+    bool isSmallScreen,
+  ) {
     return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16.0 : 32.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 16.0 : 32.0,
+        vertical: 8.0,
+      ),
       itemCount: estoqueTotal.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) => SizedBox(height: 12),
       itemBuilder: (context, index) {
         final item = estoqueTotal[index];
         return Card(
@@ -353,7 +447,9 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
             side: BorderSide(
-              color: isDark ? Colors.grey[700]! : const Color(0xFF81D4FA).withValues(alpha: 0.5),
+              color: isDark
+                  ? Colors.grey[700]!
+                  : const Color(0xFF81D4FA).withValues(alpha: 0.5),
               width: 1.2,
             ),
           ),
@@ -371,12 +467,17 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : const Color(0xFF0056B3),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0056B3),
                         ),
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -390,7 +491,7 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       onPressed: () => _confirmarDelecao(item),
@@ -399,25 +500,35 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Row(
                   children: [
                     const Icon(Icons.date_range, size: 16, color: Colors.grey),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     Text(
                       'Validade: ${item.dataValidade.isNotEmpty ? item.dataValidade : 'N/A'}',
-                      style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(Icons.medical_services_outlined, size: 16, color: Colors.grey),
-                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.medical_services_outlined,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(width: 6),
                     Text(
                       'Via: ${item.via.isNotEmpty ? item.via : 'N/A'}',
-                      style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[700], fontSize: 13),
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),

@@ -1,17 +1,22 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
 import 'services/sessao.dart';
 
 class _ChatMessage {
   final String role;
   String content;
+
   _ChatMessage({required this.role, required this.content});
+
   Map<String, String> toJson() => {'role': role, 'content': content};
 }
 
 class IaEkoScreen extends StatefulWidget {
   const IaEkoScreen({super.key});
+
   @override
   State<IaEkoScreen> createState() => _IaEkoScreenState();
 }
@@ -41,7 +46,6 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
       _channel = WebSocketChannel.connect(Uri.parse(_wsUrl));
       _channel!.stream.listen(
         (message) {
-
           if (!mounted) return;
           final data = jsonDecode(message);
           if (data['error'] != null) {
@@ -337,7 +341,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           ElevatedButton(
             onPressed: _isLoading ? null : _enviarMensagem,
             style: ElevatedButton.styleFrom(
@@ -349,7 +353,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
               elevation: 3,
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
