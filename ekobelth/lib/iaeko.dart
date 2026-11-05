@@ -119,7 +119,7 @@ class _IaEkoScreenState extends State<IaEkoScreen> {
   void _adicionarErro(String msg) {
     if (!mounted) return;
     setState(() {
-      _messages.add(_ChatMessage(role: 'assistant', content: '⚠️ $msg'));
+      _messages.add(_ChatMessage(role: 'assistant', content: '⚠️ $msg'));// parabens vc encontrou um easter egg
     });
   }
 

@@ -1,0 +1,25 @@
+========================================================================
+             EKOBELTH - GUIA RAPIDO PARA WINDOWS
+========================================================================
+
+1. PARA INSTALAR:
+   - De um duplo clique em: instalar.bat
+   - O instalador vai identificar o que voce ja tem no Windows
+     e instalar apenas o necessario.
+   - Os pacotes Python estao embutidos na pasta "pacotes\python_wheels"
+     para instalacao instantanea.
+
+2. PARA INICIAR:
+   - De um duplo clique em: iniciar.bat
+   - Escolha a opcao [1] para iniciar o Backend, IA e o App juntos!
+
+3. BANCO DE DADOS:
+   - Tenha o MySQL ou XAMPP rodando.
+   - De um duplo clique em: configurar_banco.bat para testar
+     e criar as tabelas automaticamente.
+
+4. PARA VER O QUE JA ESTA INSTALADO:
+   - De um duplo clique em: verificar_ambiente.bat
+
+Duvidas? Consulte o arquivo LEIAME.md nesta mesma pasta.
+========================================================================
