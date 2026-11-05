@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+
+import 'constants/medical_data.dart';
 import 'models/tratamento.dart';
 import 'services/api_service.dart';
-import 'constants/medical_data.dart';
 
 class AdicionarUsuarioScreen extends StatefulWidget {
   const AdicionarUsuarioScreen({super.key});
+
   @override
   _AdicionarUsuarioScreenState createState() => _AdicionarUsuarioScreenState();
 }
@@ -106,14 +108,14 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [child1, const SizedBox(height: 16), child2],
+        children: [child1, SizedBox(height: 16), child2],
       );
     } else {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: child1),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           Expanded(child: child2),
         ],
       );
@@ -171,7 +173,10 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
               color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 4,
+                ),
               ],
             ),
             child: const BackButton(color: Color(0xFF0056B3)),
@@ -196,7 +201,9 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
+                          color: const Color(
+                            0xFF4CAF50,
+                          ).withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 5,
                           offset: const Offset(0, 10),
@@ -216,16 +223,16 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32),
                         _buildTextField('Nome do(a) Paciente', nomeController),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildDropdownField(
                           'Selecione o Medicamento',
                           remedioSelecionado,
                           listaRemedios,
                           (val) => setState(() => remedioSelecionado = val),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildResponsiveRow(
                           _buildDropdownField(
                             'Via',
@@ -236,14 +243,14 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                           _buildTextField('Dose', quantidadeController),
                           isMobile,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildDropdownField(
                           'Frequência',
                           frequenciaSelecionada,
                           listaFrequencia,
                           (val) => setState(() => frequenciaSelecionada = val),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildResponsiveRow(
                           _buildDatePickerField(
                             'Data/Hora de Início',
@@ -255,13 +262,13 @@ class _AdicionarUsuarioScreenState extends State<AdicionarUsuarioScreen> {
                           ),
                           isMobile,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         _buildTextField(
                           'Observações médicas (ex: em jejum)',
                           observacoesController,
                           maxLines: 3,
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF4CAF50),

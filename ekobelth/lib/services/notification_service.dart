@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _notificationService =
@@ -11,15 +11,11 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// Indica se o plugin foi inicializado com sucesso nesta plataforma.
   bool _inicializado = false;
   Future<void>? _initFuture;
 
-  /// Se o Android permite alarmes exatos (Android 12+ pode negar).
   bool _podeAlarmeExato = true;
 
-  /// Inicializa o plugin uma única vez. Chamadas repetidas reutilizam
-  /// a mesma inicialização. Em plataformas sem suporte (ex.: web) não faz nada.
   Future<void> init() => _initFuture ??= _init();
 
   Future<void> _init() async {
@@ -43,9 +39,9 @@ class NotificationService {
 
       final android = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (android != null) {
-        // Android 13+: pede permissão para exibir notificações.
         await android.requestNotificationsPermission();
         _podeAlarmeExato =
             await android.canScheduleExactNotifications() ?? false;
@@ -67,8 +63,6 @@ class NotificationService {
       id: id,
       title: title,
       body: body,
-      // TZDateTime.from preserva o instante absoluto do DateTime local,
-      // então o horário agendado é o correto independente de tz.local.
       scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -81,7 +75,6 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
         linux: LinuxNotificationDetails(),
       ),
-      // Sem permissão de alarme exato, usa o modo inexato em vez de falhar.
       androidScheduleMode: _podeAlarmeExato
           ? AndroidScheduleMode.exactAllowWhileIdle
           : AndroidScheduleMode.inexactAllowWhileIdle,

@@ -13,7 +13,6 @@ class Usuario {
     );
   }
 
-  /// Primeiro nome, usado na saudação do dashboard.
   String get primeiroNome {
     final partes = nome.trim().split(RegExp(r'\s+'));
     return partes.isEmpty || partes.first.isEmpty ? email : partes.first;

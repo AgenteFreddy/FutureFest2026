@@ -54,7 +54,32 @@ async def atualizar(tratamento_id: int, dados: dict, usuario_id: int | None = No
 
     async with database.db_pool.acquire() as conexao:
         async with conexao.cursor() as cursor:
+            # Busca o paciente atual antes de atualizar
+            await cursor.execute(
+                "SELECT paciente FROM tratamentos WHERE id = %s" + filtro,
+                (tratamento_id, *filtro_params),
+            )
+            atual = await cursor.fetchone()
+            if not atual:
+                return None
+            paciente_antigo = (atual.get("paciente") or "").strip()
+
             await cursor.execute(query, params)
+
+            # Se o nome do paciente foi alterado, atualiza também todos os outros tratamentos do mesmo paciente
+            novo_paciente = (dados.get("paciente") or "").strip()
+            if paciente_antigo and novo_paciente and paciente_antigo != novo_paciente:
+                filtro_u, params_u = _filtro_usuario(usuario_id, "AND")
+                await cursor.execute(
+                    "UPDATE tratamentos SET paciente = %s WHERE paciente = %s" + filtro_u,
+                    (novo_paciente, paciente_antigo, *params_u),
+                )
+                logger.info(
+                    "Paciente renomeado em todos os tratamentos: '%s' -> '%s'",
+                    paciente_antigo,
+                    novo_paciente,
+                )
+
             await cursor.execute(
                 "SELECT * FROM tratamentos WHERE id = %s" + filtro,
                 (tratamento_id, *filtro_params),
